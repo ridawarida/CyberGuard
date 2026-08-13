@@ -34,5 +34,8 @@ class DatabaseSeeder extends Seeder
 
         // Seed help centers and hotlines
         $this->call(HelpCenterSeeder::class);
+
+        // Seed application data (incidents, timelines, reports)
+        $this->call(CyberGuardDataSeeder::class);
     }
 }

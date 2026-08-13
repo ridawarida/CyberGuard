@@ -20,8 +20,13 @@ class TimelineReport extends Model
         'added_at',
     ];
 
-    public function incident()
+     public function incident()
     {
         return $this->belongsTo(Incident::class, 'report_tracking_id', 'tracking_id');
+    }
+
+    public function timeline()
+    {
+        return $this->belongsTo(Timeline::class, 'timeline_id', 'id');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Timeline;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -187,4 +188,81 @@ class TimelineController extends Controller
             'message' => 'Incident removed from timeline successfully'
         ]);
     }
+
+    // DELETE (web) /timeline/delete - delete a timeline by token (form submission)
+    public function destroy(Request $request)
+    {
+        $validated = $request->validate([
+            'timeline_token' => 'required|string'
+        ]);
+
+        $timeline = DB::table('timelines')
+            ->where('tracking_id', $validated['timeline_token'])
+            ->first();
+
+        if (!$timeline) {
+            return redirect()->route('timeline.create')->withErrors(['timeline_token' => 'Timeline not found.']);
+        }
+
+        // Delete associated timeline_reports
+        DB::table('timeline_reports')
+            ->where('timeline_id', $timeline->id)
+            ->delete();
+
+        // Delete the timeline
+        DB::table('timelines')
+            ->where('id', $timeline->id)
+            ->delete();
+
+        return redirect()->route('timeline.create')->with('success', 'Timeline deleted successfully.');
+    }
+
+     /**
+     * Remove multiple incidents from a timeline.
+     */
+    public function removeIncidents(Request $request, $tracking_id)
+    {
+        $request->validate([
+            'incidents_to_remove' => 'required|json'
+        ]);
+
+        // Decode the JSON array
+        $incidentTokens = json_decode($request->incidents_to_remove, true);
+
+        if (!is_array($incidentTokens) || empty($incidentTokens)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'No incidents specified to remove.'
+            ], 400);
+        }
+
+        // Find the timeline
+        $timeline = Timeline::byTrackingId($tracking_id)->first();
+
+        if (!$timeline) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Timeline not found.'
+            ], 404);
+        }
+
+        $removedCount = 0;
+
+        // Remove each incident
+        foreach ($incidentTokens as $token) {
+            if ($timeline->removeIncident($token)) {
+                $removedCount++;
+            }
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'message' => "Successfully removed {$removedCount} incident(s) from the timeline.",
+            'data' => [
+                'removed_count' => $removedCount,
+                'remaining_count' => $timeline->incidents()->count()
+            ]
+        ]);
+    }
+
 }
