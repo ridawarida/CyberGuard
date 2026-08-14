@@ -1930,3 +1930,6 @@
 #43 C:/Users/pc/Downloads/Users/Ishrat/Projects/CyberGuard/vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php(23): require_once('C://Users//pc//Dow...')
 #44 {main}
 "} 
+[2026-08-14 00:19:21] local.WARNING: Email sending failed: Trying to access array offset on null  
+[2026-08-14 00:22:13] local.WARNING: Email sending failed: Trying to access array offset on null  
+[2026-08-14 00:33:53] local.WARNING: Email sending failed: Failed to authenticate on SMTP server with username "83cbdb83a2968f" using the following authenticators: "CRAM-MD5", "LOGIN", "PLAIN". Authenticator "CRAM-MD5" returned "Expected response code "235" but got code "535", with message "535 5.7.0 Invalid credentials".". Authenticator "LOGIN" returned "Expected response code "334" but got empty code.". Authenticator "PLAIN" returned "Expected response code "235" but got empty code.".  

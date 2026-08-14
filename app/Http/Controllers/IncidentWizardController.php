@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Http\Controllers;
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -24,13 +22,11 @@ class IncidentWizardController extends Controller
             'platform' => 'required|string|max:100',
             'behavior_type' => 'required|string|max:100',
         ]);
-
         session([
             'incident_wizard.incident_date' => $validated['incident_date'],
             'incident_wizard.platform' => $validated['platform'],
             'incident_wizard.behavior_type' => $validated['behavior_type'],
         ]);
-
         return redirect()->route('incident.wizard.step2');
     }
 
@@ -50,12 +46,10 @@ class IncidentWizardController extends Controller
             'description' => 'required|string|max:2000',
             'overview' => 'nullable|string|max:500',
         ]);
-
         session([
             'incident_wizard.description' => $validated['description'],
             'incident_wizard.overview' => $validated['overview'] ?? null,
         ]);
-
         return redirect()->route('incident.wizard.step3');
     }
 
@@ -73,6 +67,7 @@ class IncidentWizardController extends Controller
     {
         $request->validate([
             'evidence_image' => 'nullable|image|max:5120', // max 5MB
+            'email' => 'nullable|email',
         ]);
 
         $trackingId = 'inc' . strtoupper(Str::random(10));
@@ -95,6 +90,11 @@ class IncidentWizardController extends Controller
             'status' => 'New',
         ]);
 
+        // Send tracking code via email if provided (email is never stored)
+        if ($request->filled('email')) {
+            $this->sendTrackingCodeEmail($request->input('email'), $trackingId);
+        }
+
         // Clear wizard session data
         session()->forget([
             'incident_wizard.incident_date',
@@ -109,15 +109,29 @@ class IncidentWizardController extends Controller
         return redirect()->route('incident.wizard.success');
     }
 
+    // Send tracking code via email (email is not stored anywhere)
+    private function sendTrackingCodeEmail(string $email, string $trackingId): void
+    {
+        try {
+            \Illuminate\Support\Facades\Mail::raw(
+                "Your report has been submitted successfully.\n\nYour tracking code is: {$trackingId}\n\nPlease keep this code safe — it is the only way to reference your case.",
+                function ($message) use ($email) {
+                    $message->to($email)
+                            ->subject('Your CyberGuard Tracking Code');
+                }
+            );
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::warning('Email sending failed: ' . $e->getMessage());
+        }
+    }
+
     // SUCCESS - Show tracking code
     public function success()
     {
         $trackingId = session('incident_wizard.tracking_id');
-
         if (!$trackingId) {
             return redirect()->route('incident.wizard.step1');
         }
-
         return view('incident.success', ['tracking_id' => $trackingId]);
     }
 }
