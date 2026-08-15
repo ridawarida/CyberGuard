@@ -3,6 +3,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TimelineWizardController;
 use App\Http\Controllers\TimelineController;
 use App\Http\Controllers\IncidentWizardController;
+use App\Http\Controllers\StaffAuthController;
+use App\Http\Controllers\Moderator\IncidentReviewController;
 use App\Models\Timeline;
 
 // Guest/Anonymous routes for Timeline
@@ -57,4 +59,31 @@ Route::get('/', function () {
 })->name('home');
 
 Route::post('/timeline/delete', [TimelineController::class, 'destroy'])->name('timeline.delete');
+
+/*
+|--------------------------------------------------------------------------
+| Staff session login (Anika, Module 2)
+|--------------------------------------------------------------------------
+| The API in routes/api.php uses Sanctum tokens. Browser pages need a normal
+| session, so staff sign in here.
+*/
+Route::get('/staff/login', [StaffAuthController::class, 'showLogin'])->name('staff.login');
+Route::post('/staff/login', [StaffAuthController::class, 'login'])->name('staff.login.submit');
+Route::post('/staff/logout', [StaffAuthController::class, 'logout'])->name('staff.logout');
+
+/*
+|--------------------------------------------------------------------------
+| Moderator Incident Assessment and Case Lifecycle Updates (Anika, Module 2)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('staff:moderator,admin')
+    ->prefix('moderator/incidents')
+    ->name('moderator.incidents.')
+    ->group(function () {
+        Route::get('/', [IncidentReviewController::class, 'index'])->name('index');
+        Route::get('/{incident}', [IncidentReviewController::class, 'show'])->name('show');
+        Route::post('/{incident}/claim', [IncidentReviewController::class, 'claim'])->name('claim');
+        Route::post('/{incident}/release', [IncidentReviewController::class, 'release'])->name('release');
+        Route::put('/{incident}', [IncidentReviewController::class, 'update'])->name('update');
+    });
     
