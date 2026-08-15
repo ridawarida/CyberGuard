@@ -28,6 +28,22 @@ Route::prefix('panic')->name('panic.')->group(function () {
         ->middleware('throttle:60,1')
         ->name('escape');
 
+    // Local demo page used for the lab evaluation. Never exposed in production.
+    if (app()->environment('local')) {
+        Route::get('/demo', function () {
+            return view('panic.demo', [
+                'draft' => session('incident_wizard.description'),
+                'config' => \App\Models\PanicSetting::active()->toClientPayload(),
+            ]);
+        })->name('demo');
+
+        Route::post('/demo', function (\Illuminate\Http\Request $request) {
+            session(['incident_wizard.description' => $request->input('description')]);
+
+            return redirect()->route('panic.demo');
+        })->name('demo.store');
+    }
+
     // Admin only configuration and metrics.
     Route::middleware(['auth:sanctum', 'role:admin'])
         ->prefix('admin')

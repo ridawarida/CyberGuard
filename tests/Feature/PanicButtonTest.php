@@ -150,6 +150,24 @@ it('lets an admin change the decoy site', function () {
         ->assertJsonPath('data.decoy_url', 'https://www.google.com');
 });
 
+it('renders the floating escape button on victim facing pages', function () {
+    activePanicSetting();
+
+    $this->get('/timeline/create')
+        ->assertStatus(200)
+        ->assertSee('data-panic-button', false)
+        ->assertSee('Quick Escape')
+        ->assertSee('js/panic.js', false);
+});
+
+it('ships a csrf token and a no javascript fallback form', function () {
+    activePanicSetting();
+
+    $this->get('/timeline/create')
+        ->assertSee('name="csrf-token"', false)
+        ->assertSee(route('panic.escape'), false);
+});
+
 it('refuses an insecure or self referencing decoy url', function () {
     activePanicSetting();
 
