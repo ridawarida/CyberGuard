@@ -45,7 +45,7 @@
 
             <div class="card mb-4">
                 <div class="card-body">
-                    <h5 class="card-title mb-3">Write a fake report</h5>
+                    <h5 class="card-title mb-3">Write a report</h5>
                     <form action="{{ route('panic.demo.store') }}" method="POST">
                         @csrf
                         <div class="mb-3">
