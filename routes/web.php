@@ -60,6 +60,8 @@ Route::get('/', function () {
 
 Route::post('/timeline/delete', [TimelineController::class, 'destroy'])->name('timeline.delete');
 
+// Johra - Module 1: Quick Escape Panic Button routes.
+require __DIR__ . '/panic.php';
 /*
 |--------------------------------------------------------------------------
 | Staff session login (Anika, Module 2)

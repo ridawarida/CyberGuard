@@ -37,5 +37,8 @@ class DatabaseSeeder extends Seeder
 
         // Seed application data (incidents, timelines, reports)
         $this->call(CyberGuardDataSeeder::class);
+
+        // Johra - Module 1: default panic button configuration
+        $this->call(PanicSettingSeeder::class);
     }
 }
