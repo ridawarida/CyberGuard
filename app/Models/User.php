@@ -41,4 +41,10 @@ class User extends Authenticatable
     {
         return $this->role === 'moderator';
     }
+
+    // Cases this staff member has claimed in the moderation workspace.
+    public function assignedIncidents()
+    {
+        return $this->hasMany(Incident::class, 'assigned_moderator_id');
+    }
 }
