@@ -22,12 +22,18 @@ class Incident extends Model
         'overview',
         'evidence_image',
         'status',
+        'assigned_moderator_id',
+        'claimed_at',
+        'moderator_notes',
+        'reviewed_at',
     ];
 
     protected $casts = [
         'incident_date' => 'datetime',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
+        'claimed_at' => 'datetime',
+        'reviewed_at' => 'datetime',
     ];
 
     // Relationships
@@ -72,6 +78,75 @@ class Incident extends Model
     public function scopeByTrackingId($query, $trackingId)
     {
         return $query->where('tracking_id', $trackingId);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Moderation workspace (case ownership + lifecycle)
+    |--------------------------------------------------------------------------
+    */
+
+    public function assignedModerator()
+    {
+        return $this->belongsTo(User::class, 'assigned_moderator_id');
+    }
+
+    // A case sitting in the open pool has not been locked by anyone yet.
+    public function isClaimed(): bool
+    {
+        return $this->assigned_moderator_id !== null;
+    }
+
+    public function isClaimedBy(?User $user): bool
+    {
+        return $user !== null && $this->assigned_moderator_id === $user->id;
+    }
+
+    // Admins can inspect anything, moderators only what they personally claimed.
+    public function isReviewableBy(?User $user): bool
+    {
+        if ($user === null) {
+            return false;
+        }
+
+        return $user->isAdmin() || $this->isClaimedBy($user);
+    }
+
+    public function scopeUnclaimed($query)
+    {
+        return $query->whereNull('assigned_moderator_id');
+    }
+
+    public function scopeClaimedBy($query, $userId)
+    {
+        return $query->where('assigned_moderator_id', $userId);
+    }
+
+    /**
+     * Applies the moderator dashboard filters: submission date range,
+     * platform, region, status and tracking code search.
+     */
+    public function scopeFilter($query, array $filters)
+    {
+        return $query
+            ->when($filters['date_from'] ?? null, function ($q, $date) {
+                $q->whereDate('created_at', '>=', $date);
+            })
+            ->when($filters['date_to'] ?? null, function ($q, $date) {
+                $q->whereDate('created_at', '<=', $date);
+            })
+            ->when($filters['platform'] ?? null, function ($q, $platform) {
+                $q->where('platform', $platform);
+            })
+            ->when($filters['region'] ?? null, function ($q, $region) {
+                $q->where('region', $region);
+            })
+            ->when($filters['status'] ?? null, function ($q, $status) {
+                $q->where('status', $status);
+            })
+            ->when($filters['q'] ?? null, function ($q, $term) {
+                $q->where('tracking_id', 'like', '%' . $term . '%');
+            });
     }
 }
 
