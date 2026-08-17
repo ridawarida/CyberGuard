@@ -6,6 +6,7 @@ use App\Http\Controllers\IncidentWizardController;
 use App\Http\Controllers\StaffAuthController;
 use App\Http\Controllers\Moderator\IncidentReviewController;
 use App\Models\Timeline;
+use App\Http\Controllers\TicketStatusController;
 
 // Guest/Anonymous routes for Timeline
 Route::get('/timeline/create', function () {
@@ -39,6 +40,10 @@ Route::prefix('incident/wizard')->name('incident.wizard.')->group(function () {
     Route::post('/step3', [IncidentWizardController::class, 'postStep3'])->name('postStep3');
     Route::get('/success', [IncidentWizardController::class, 'success'])->name('success');
 });
+
+// Anonymous Ticket Status Tracking Portal
+Route::get('/ticket-status', [TicketStatusController::class, 'index'])->name('ticket.status.index');
+Route::post('/ticket-status', [TicketStatusController::class, 'search'])->name('ticket.status.search');
 
 // View existing timeline
 Route::get('/timeline/view/{tracking_id}', function ($tracking_id) {

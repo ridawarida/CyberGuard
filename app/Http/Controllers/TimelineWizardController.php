@@ -172,7 +172,7 @@ class TimelineWizardController extends Controller
         }
 
         // Get categories from database
-        $categories = \DB::table('behavior_categories')->pluck('name')->toArray();
+        $categories =\DB::table('behavior_categories')->pluck('name')->toArray();
 
         return view('timeline.wizard', [
             'step' => 3,
