@@ -3,24 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Models\Incident;
-use App\Models\Timeline;
+use App\Models\CaseFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 
-class TimelineWizardController extends Controller
+class CaseFileWizardController extends Controller
 {
     /**
      * Show the wizard step 1
      */
     public function step1()
     {
-        Session::forget('timeline_wizard');
-        Session::forget('timeline_incidents');
+        Session::forget('case_file_wizard');
+        Session::forget('case_file_incidents');
 
-        return view('timeline.wizard', [
+        return view('case-file.wizard', [
             'step' => 1,
-            'data' => Session::get('timeline_wizard', [])
+            'data' => Session::get('case_file_wizard', [])
         ]);
     }
 
@@ -33,31 +33,31 @@ class TimelineWizardController extends Controller
             'action' => 'required|in:existing,new'
         ]);
 
-        $data = Session::get('timeline_wizard', []);
+        $data = Session::get('case_file_wizard', []);
 
         if ($request->action === 'existing') {
             $request->validate([
-                'timeline_token' => 'required|string'
+                'case_file_token' => 'required|string'
             ]);
 
-            // Verify the timeline exists
-            $timeline = Timeline::byTrackingId($request->timeline_token)->first();
-            if (!$timeline) {
+            // Verify the case file exists
+            $caseFile = CaseFile::byTrackingId($request->case_file_token)->first();
+            if (!$caseFile) {
                 return back()->withErrors([
-                    'timeline_token' => 'Timeline not found. Please check your token.'
+                    'case_file_token' => 'Case file not found. Please check your token.'
                 ]);
             }
 
-            $data['timeline_token'] = $request->timeline_token;
+            $data['case_file_token'] = $request->case_file_token;
             $data['is_new'] = false;
-            $data['timeline_id'] = $timeline->id;
+            $data['case_file_id'] = $caseFile->id;
         } else {
             $data['is_new'] = true;
         }
 
-        Session::put('timeline_wizard', $data);
+        Session::put('case_file_wizard', $data);
 
-        return redirect()->route('timeline.wizard.step2');
+        return redirect()->route('case-file.wizard.step2');
     }
 
     /**
@@ -65,16 +65,16 @@ class TimelineWizardController extends Controller
      */
     public function step2()
     {
-        $data = Session::get('timeline_wizard', []);
+        $data = Session::get('case_file_wizard', []);
 
         if (empty($data)) {
-            return redirect()->route('timeline.wizard.step1');
+            return redirect()->route('case-file.wizard.step1');
         }
 
-        return view('timeline.wizard', [
+        return view('case-file.wizard', [
             'step' => 2,
             'data' => $data,
-            'incidents' => Session::get('timeline_incidents', [])
+            'incidents' => Session::get('case_file_incidents', [])
         ]);
     }
 
@@ -95,22 +95,22 @@ class TimelineWizardController extends Controller
         ]);
     }
 
-    //Check if incident already belongs to a timeline
-    if ($incident->hasTimeline()) {
-        $currentTimeline = $incident->getCurrentTimeline();
-        $currentToken = $currentTimeline ? $currentTimeline->tracking_id : 'unknown';
+    // Check if incident already belongs to a case file.
+    if ($incident->hasCaseFile()) {
+        $currentCaseFile = $incident->getCurrentCaseFile();
+        $currentToken = $currentCaseFile ? $currentCaseFile->tracking_id : 'unknown';
         
         return back()->withErrors([
-            'incident_token' => "This incident already belongs to timeline '{$currentToken}'. Each incident can only be in one timeline."
+            'incident_token' => "This incident already belongs to case file '{$currentToken}'. Each incident can only be in one case file."
         ]);
     }
 
     // Check if already added to current session
-    $incidents = Session::get('timeline_incidents', []);
+    $incidents = Session::get('case_file_incidents', []);
     foreach ($incidents as $existing) {
         if ($existing['token'] === $request->incident_token) {
             return back()->withErrors([
-                'incident_token' => 'This incident has already been added to the current timeline.'
+                'incident_token' => 'This incident has already been added to the current case file.'
             ]);
         }
     }
@@ -125,9 +125,9 @@ class TimelineWizardController extends Controller
             'added_at' => now()->toDateTimeString()
         ];
 
-        Session::put('timeline_incidents', $incidents);
+        Session::put('case_file_incidents', $incidents);
 
-        return redirect()->route('timeline.wizard.step2')->with('success', 'Incident added successfully!');
+        return redirect()->route('case-file.wizard.step2')->with('success', 'Incident added successfully!');
     }
 
     /**
@@ -135,15 +135,15 @@ class TimelineWizardController extends Controller
      */
     public function removeIncident($index)
     {
-        $incidents = Session::get('timeline_incidents', []);
+        $incidents = Session::get('case_file_incidents', []);
 
         if (isset($incidents[$index])) {
             unset($incidents[$index]);
             $incidents = array_values($incidents);
-            Session::put('timeline_incidents', $incidents);
+            Session::put('case_file_incidents', $incidents);
         }
 
-        return redirect()->route('timeline.wizard.step2');
+        return redirect()->route('case-file.wizard.step2');
     }
 
     /**
@@ -151,13 +151,13 @@ class TimelineWizardController extends Controller
      */
     public function postStep2(Request $request)
     {
-        $data = Session::get('timeline_wizard', []);
+        $data = Session::get('case_file_wizard', []);
 
         if (empty($data)) {
-            return redirect()->route('timeline.wizard.step1');
+            return redirect()->route('case-file.wizard.step1');
         }
 
-        return redirect()->route('timeline.wizard.step3');
+        return redirect()->route('case-file.wizard.step3');
     }
 
     /**
@@ -165,25 +165,25 @@ class TimelineWizardController extends Controller
      */
     public function step3()
     {
-        $data = Session::get('timeline_wizard', []);
+        $data = Session::get('case_file_wizard', []);
 
         if (empty($data)) {
-            return redirect()->route('timeline.wizard.step1');
+            return redirect()->route('case-file.wizard.step1');
         }
 
         // Get categories from database
         $categories =\DB::table('behavior_categories')->pluck('name')->toArray();
 
-        return view('timeline.wizard', [
+        return view('case-file.wizard', [
             'step' => 3,
             'data' => $data,
             'categories' => $categories,
-            'incidents' => Session::get('timeline_incidents', [])
+            'incidents' => Session::get('case_file_incidents', [])
         ]);
     }
 
     /**
-     * Process step 3 and save the timeline
+    * Process step 3 and save the case file
      */
     public function postStep3(Request $request)
     {
@@ -192,58 +192,58 @@ class TimelineWizardController extends Controller
             'category' => 'required|string'
         ]);
 
-        $data = Session::get('timeline_wizard', []);
-        $incidents = Session::get('timeline_incidents', []);
+        $data = Session::get('case_file_wizard', []);
+        $incidents = Session::get('case_file_incidents', []);
 
         if (empty($data)) {
-            return redirect()->route('timeline.wizard.step1');
+            return redirect()->route('case-file.wizard.step1');
         }
 
         $data['description'] = $request->description;
         $data['category'] = $request->category;
         foreach ($incidents as $incidentData) {
             $incident = Incident::byTrackingId($incidentData['token'])->first();
-            if ($incident && $incident->hasTimeline()) {
-                $currentTimeline = $incident->getCurrentTimeline();
-                $currentToken = $currentTimeline ? $currentTimeline->tracking_id : 'unknown';
+            if ($incident && $incident->hasCaseFile()) {
+                $currentCaseFile = $incident->getCurrentCaseFile();
+                $currentToken = $currentCaseFile ? $currentCaseFile->tracking_id : 'unknown';
                 
                 return back()->withErrors([
-                    'category' => "Incident '{$incident->tracking_id}' already belongs to timeline '{$currentToken}'. Each incident can only be in one timeline."
+                    'category' => "Incident '{$incident->tracking_id}' already belongs to case file '{$currentToken}'. Each incident can only be in one case file."
                 ]);
             }
         }
         if ($data['is_new']) {
-            // Create new timeline
-            $timeline = Timeline::create([
+            // Create new case file
+            $caseFile = CaseFile::create([
                 'description' => $data['description'],
                 'category' => $data['category'],
             ]);
-            $data['timeline_token'] = $timeline->tracking_id;
-            $data['timeline_id'] = $timeline->id;
+            $data['case_file_token'] = $caseFile->tracking_id;
+            $data['case_file_id'] = $caseFile->id;
         } else {
-            // Update existing timeline
-            $timeline = Timeline::find($data['timeline_id']);
-            if ($timeline) {
-                $timeline->update([
+            // Update existing case file
+            $caseFile = CaseFile::find($data['case_file_id']);
+            if ($caseFile) {
+                $caseFile->update([
                     'description' => $data['description'],
                     'category' => $data['category'],
                 ]);
             }
         }
 
-        // Add incidents to timeline
-        if ($timeline && !empty($incidents)) {
+        // Add incidents to case file
+        if ($caseFile && !empty($incidents)) {
             foreach ($incidents as $incidentData) {
                 $incident = Incident::byTrackingId($incidentData['token'])->first();
                 if ($incident) {
-                    $timeline->addIncident($incident);
+                    $caseFile->addIncident($incident);
                 }
             }
         }
 
-        Session::put('timeline_wizard', $data);
+        Session::put('case_file_wizard', $data);
 
-        return redirect()->route('timeline.wizard.success');
+        return redirect()->route('case-file.wizard.success');
     }
 
     /**
@@ -251,14 +251,14 @@ class TimelineWizardController extends Controller
      */
     public function success()
     {
-        $data = Session::get('timeline_wizard', []);
-        $incidents = Session::get('timeline_incidents', []);
+        $data = Session::get('case_file_wizard', []);
+        $incidents = Session::get('case_file_incidents', []);
 
         if (empty($data)) {
-            return redirect()->route('timeline.wizard.step1');
+            return redirect()->route('case-file.wizard.step1');
         }
 
-        return view('timeline.success', [
+        return view('case-file.success', [
             'data' => $data,
             'incidents' => $incidents,
             'is_new' => $data['is_new'] ?? true
@@ -270,9 +270,9 @@ class TimelineWizardController extends Controller
      */
     public function reset()
     {
-        Session::forget('timeline_wizard');
-        Session::forget('timeline_incidents');
+        Session::forget('case_file_wizard');
+        Session::forget('case_file_incidents');
 
-        return redirect()->route('timeline.create');
+        return redirect()->route('case-file.create');
     }
 }

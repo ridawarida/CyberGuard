@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Create Timeline - CyberGuard')
+@section('title', 'Create Case File - CyberGuard')
 
 @section('content')
 <div class="container mt-4">
@@ -19,7 +19,7 @@
                 <span class="text-muted small">Step {{ $step }} of 3</span>
                 <span class="text-muted small">
                     @if($step == 1)
-                        Timeline Selection
+                        Case File Selection
                     @elseif($step == 2)
                         Add Incidents
                     @else
@@ -32,31 +32,31 @@
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-4 p-md-5">
                     
-                    <!-- Step 1: Timeline Selection -->
+                    <!-- Step 1: Case File Selection -->
                     @if($step == 1)
                     <h3 class="card-title mb-3" style="font-weight: 700; color: #1a1a1a;">
-                        <i class="fas fa-timeline me-2" style="color: #DC143C;"></i>
-                        Step 1: Timeline Selection
+                        <i class="fas fa-folder-open me-2" style="color: #DC143C;"></i>
+                        Step 1: Case File Selection
                     </h3>
                     <p class="text-muted mb-4">
-                        Paste your Timeline-exclusive token and continue to build your case.
+                        Paste your case-file token and continue to build your case.
                     </p>
 
-                    <form action="{{ route('timeline.wizard.postStep1') }}" method="POST">
+                    <form action="{{ route('case-file.wizard.postStep1') }}" method="POST">
                         @csrf
                         
-                        <!-- Existing Timeline Option -->
+                        <!-- Existing Case File Option -->
                         <div class="mb-4">
-                            <label class="form-label fw-semibold">Existing Timeline</label>
+                            <label class="form-label fw-semibold">Existing Case File</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">
                                     <i class="fas fa-key text-muted"></i>
                                 </span>
-                                <input type="text" name="timeline_token" class="form-control @error('timeline_token') is-invalid @enderror" 
-                                       placeholder="Paste your timeline-exclusive token (e.g., tl7X9b2K1pQ4z8w3M)"
-                                       value="{{ old('timeline_token') }}">
+                                    <input type="text" name="case_file_token" class="form-control @error('case_file_token') is-invalid @enderror"
+                                        placeholder="Paste your case-file token (e.g., cf7X9b2K1pQ4z8w3M)"
+                                        value="{{ old('case_file_token') }}">
                             </div>
-                            @error('timeline_token')
+                            @error('case_file_token')
                                 <div class="text-danger small mt-1">{{ $message }}</div>
                             @enderror
                             <button type="submit" name="action" value="existing" class="btn btn-crimson mt-3">
@@ -66,12 +66,12 @@
 
                         <hr class="my-4">
 
-                        <!-- New Timeline Option -->
+                        <!-- New Case File Option -->
                         <div>
-                            <label class="form-label fw-semibold">No timeline created yet?</label>
-                            <p class="text-muted small">Start a new timeline from scratch.</p>
+                            <label class="form-label fw-semibold">No case file created yet?</label>
+                            <p class="text-muted small">Start a new case file from scratch.</p>
                             <button type="submit" name="action" value="new" class="btn btn-crimson-outline">
-                                <i class="fas fa-plus-circle me-1"></i> New Timeline
+                                <i class="fas fa-plus-circle me-1"></i> New Case File
                             </button>
                         </div>
                     </form>
@@ -93,11 +93,11 @@
     Step 2: Add Incidents
 </h3>
 <p class="text-muted mb-4">
-    Paste your incident-exclusive token to add the incident to the timeline.
+    Paste your incident-exclusive token to add the incident to the case file.
 </p>
 
 <!-- Add Incident Form -->
-<form action="{{ route('timeline.wizard.addIncident') }}" method="POST" class="mb-4">
+<form action="{{ route('case-file.wizard.addIncident') }}" method="POST" class="mb-4">
     @csrf
     <div class="input-group">
         <span class="input-group-text bg-light border-end-0">
@@ -131,7 +131,7 @@
                         <span class="text-muted small ms-2">{{ $incident['overview'] }}</span>
                         <span class="text-muted small ms-2">Added: {{ $incident['added_at'] }}</span>
                     </div>
-                    <form action="{{ route('timeline.wizard.removeIncident', $index) }}" method="POST">
+                    <form action="{{ route('case-file.wizard.removeIncident', $index) }}" method="POST">
                         @csrf
                         <button type="submit" class="btn btn-sm btn-outline-danger">
                             <i class="fas fa-trash"></i>
@@ -150,10 +150,10 @@
 
 <!-- Navigation -->
 <div class="d-flex justify-content-between">
-    <a href="{{ route('timeline.wizard.step1') }}" class="btn btn-outline-secondary">
+    <a href="{{ route('case-file.wizard.step1') }}" class="btn btn-outline-secondary">
         <i class="fas fa-arrow-left me-1"></i> Back
     </a>
-    <form action="{{ route('timeline.wizard.postStep2') }}" method="POST">
+    <form action="{{ route('case-file.wizard.postStep2') }}" method="POST">
         @csrf
         <button type="submit" class="btn btn-crimson">
             Next Step <i class="fas fa-arrow-right ms-1"></i>
@@ -168,10 +168,10 @@
                         Step 3: Case Details
                     </h3>
                     <p class="text-muted mb-4">
-                        Add a description of your timeline case and choose a category.
+                        Add a description of your case file and choose a category.
                     </p>
 
-                    <form action="{{ route('timeline.wizard.postStep3') }}" method="POST">
+                    <form action="{{ route('case-file.wizard.postStep3') }}" method="POST">
                         @csrf
                         
                         <!-- Description -->
@@ -179,7 +179,7 @@
                             <label for="description" class="form-label fw-semibold">Description</label>
                             <textarea name="description" id="description" rows="4" 
                                       class="form-control @error('description') is-invalid @enderror"
-                                      placeholder="Add a short overview of the case you are building the timeline for...">{{ old('description') }}</textarea>
+                                      placeholder="Add a short overview of the case file you are building...">{{ old('description') }}</textarea>
                             <div class="form-text">Max 500 characters.</div>
                             @error('description')
                                 <div class="text-danger small mt-1">{{ $message }}</div>
@@ -216,11 +216,11 @@
 
                         <!-- Navigation -->
                         <div class="d-flex justify-content-between">
-                            <a href="{{ route('timeline.wizard.step2') }}" class="btn btn-outline-secondary">
+                            <a href="{{ route('case-file.wizard.step2') }}" class="btn btn-outline-secondary">
                                 <i class="fas fa-arrow-left me-1"></i> Back
                             </a>
                             <button type="submit" class="btn btn-crimson">
-                                <i class="fas fa-save me-1"></i> Save Timeline
+                                <i class="fas fa-save me-1"></i> Save Case File
                             </button>
                         </div>
                     </form>
@@ -231,7 +231,7 @@
 
             <!-- Cancel Link -->
             <div class="text-center mt-4">
-                <a href="{{ route('timeline.create') }}" class="text-muted text-decoration-none small">
+                <a href="{{ route('case-file.create') }}" class="text-muted text-decoration-none small">
                     <i class="fas fa-times me-1"></i> Cancel and return
                 </a>
             </div>

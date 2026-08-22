@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Timeline;
+use App\Models\CaseFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
-class TimelineController extends Controller
+class CaseFileController extends Controller
 {
     // GET 
     public function categories()
@@ -20,7 +20,7 @@ class TimelineController extends Controller
         ]);
     }
 
-    // POST /api/timeline
+    // POST /api/case-files
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -28,9 +28,9 @@ class TimelineController extends Controller
             'category' => 'required|string'
         ]);
 
-        $trackingId = 'tl' . Str::random(12);
+        $trackingId = 'cf' . Str::random(12);
         
-        DB::table('timelines')->insert([
+        DB::table('case_files')->insert([
             'tracking_id' => $trackingId,
             'description' => $validated['description'],
             'category' => $validated['category'],
@@ -40,7 +40,7 @@ class TimelineController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Timeline created successfully',
+            'message' => 'Case file created successfully',
             'data' => [
                 'tracking_id' => $trackingId,
                 'description' => $validated['description'],
@@ -49,56 +49,55 @@ class TimelineController extends Controller
         ], 201);
     }
 
-    // GET /api/timeline/{tracking_id}
+    // GET /api/case-files/{tracking_id}
     public function show($tracking_id)
     {
-        $timeline = DB::table('timelines')
+        $caseFile = DB::table('case_files')
             ->where('tracking_id', $tracking_id)
             ->first();
 
-        if (!$timeline) {
+        if (!$caseFile) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Timeline not found'
+                'message' => 'Case file not found'
             ], 404);
         }
 
-        $timelineReports = DB::table('timeline_reports')
-            ->where('timeline_id', $timeline->id)
+        $caseFileIncidents = DB::table('case_file_incidents')
+            ->where('case_file_id', $caseFile->id)
             ->get();
 
         return response()->json([
             'status' => 'success',
             'data' => [
-                'tracking_id' => $timeline->tracking_id,
-                'description' => $timeline->description,
-                'category' => $timeline->category,
-                'reports' => $timelineReports,
-                'incidents' => $timelineReports,
+                'tracking_id' => $caseFile->tracking_id,
+                'description' => $caseFile->description,
+                'category' => $caseFile->category,
+                'incidents' => $caseFileIncidents,
             ]
         ]);
     }
 
-    // POST /api/timeline/{tracking_id}/report
-    public function addReport(Request $request, $tracking_id)
+    // POST /api/case-files/{tracking_id}/incidents
+    public function addIncident(Request $request, $tracking_id)
     {
         $validated = $request->validate([
-            'report_tracking_id' => 'required|string'
+            'incident_tracking_id' => 'required|string'
         ]);
 
-        $timeline = DB::table('timelines')
+        $caseFile = DB::table('case_files')
             ->where('tracking_id', $tracking_id)
             ->first();
 
-        if (!$timeline) {
+        if (!$caseFile) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Timeline not found'
+                'message' => 'Case file not found'
             ], 404);
         }
 
         $incident = DB::table('incidents')
-            ->where('tracking_id', $validated['report_tracking_id'])
+            ->where('tracking_id', $validated['incident_tracking_id'])
             ->first();
 
         if (!$incident) {
@@ -108,13 +107,13 @@ class TimelineController extends Controller
             ], 404);
         }
 
-        DB::table('timeline_reports')->insert([
-            'timeline_id' => $timeline->id,
-            'report_tracking_id' => $incident->tracking_id,
-            'report_overview' => $incident->overview ?? $incident->description,
-            'report_incident_date' => $incident->incident_date,
-            'report_platform' => $incident->platform,
-            'report_region' => $incident->region,
+        DB::table('case_file_incidents')->insert([
+            'case_file_id' => $caseFile->id,
+            'incident_tracking_id' => $incident->tracking_id,
+            'incident_overview' => $incident->overview ?? $incident->description,
+            'incident_date' => $incident->incident_date,
+            'incident_platform' => $incident->platform,
+            'incident_region' => $incident->region,
             'behavior_type' => $incident->behavior_type,
             'severity' => $incident->severity,
             'added_at' => now(),
@@ -124,11 +123,11 @@ class TimelineController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Report added to timeline successfully'
+            'message' => 'Incident added to case file successfully'
         ]);
     }
 
-    // PUT /api/timeline/{tracking_id}
+    // PUT /api/case-files/{tracking_id}
     public function update(Request $request, $tracking_id)
     {
         $validated = $request->validate([
@@ -136,7 +135,7 @@ class TimelineController extends Controller
             'category' => 'sometimes|string'
         ]);
 
-        $updated = DB::table('timelines')
+        $updated = DB::table('case_files')
             ->where('tracking_id', $tracking_id)
             ->update([
                 'description' => $validated['description'] ?? DB::raw('description'),
@@ -147,78 +146,78 @@ class TimelineController extends Controller
         if (!$updated) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Timeline not found'
+                'message' => 'Case file not found'
             ], 404);
         }
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Timeline updated successfully'
+            'message' => 'Case file updated successfully'
         ]);
     }
 
-    // DELETE /api/timeline/{tracking_id}/report/{report_tracking_id}
-    public function removeReport($tracking_id, $report_tracking_id)
+    // DELETE /api/case-files/{tracking_id}/incidents/{incident_tracking_id}
+    public function removeIncident($tracking_id, $incident_tracking_id)
     {
-        $timeline = DB::table('timelines')
+        $caseFile = DB::table('case_files')
             ->where('tracking_id', $tracking_id)
             ->first();
 
-        if (!$timeline) {
+        if (!$caseFile) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Timeline not found'
+                'message' => 'Case file not found'
             ], 404);
         }
 
-        $deleted = DB::table('timeline_reports')
-            ->where('timeline_id', $timeline->id)
-            ->where('report_tracking_id', $report_tracking_id)
+        $deleted = DB::table('case_file_incidents')
+            ->where('case_file_id', $caseFile->id)
+            ->where('incident_tracking_id', $incident_tracking_id)
             ->delete();
 
         if (!$deleted) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Incident not found in this timeline'
+                'message' => 'Incident not found in this case file'
             ], 404);
         }
 
         return response()->json([
             'status' => 'success',
-            'message' => 'Incident removed from timeline successfully'
+                'message' => 'Incident removed from case file successfully'
         ]);
     }
 
-    // DELETE (web) /timeline/delete - delete a timeline by token (form submission)
+    // DELETE (web) /case-files/delete - delete a case file by token (form submission)
     public function destroy(Request $request)
     {
         $validated = $request->validate([
-            'timeline_token' => 'required|string'
+            'case_file_token' => 'required|string'
         ]);
 
-        $timeline = DB::table('timelines')
-            ->where('tracking_id', $validated['timeline_token'])
+        $caseFile = DB::table('case_files')
+            ->where('tracking_id', $validated['case_file_token'])
             ->first();
 
-        if (!$timeline) {
-            return redirect()->route('timeline.create')->withErrors(['timeline_token' => 'Timeline not found.']);
+        if (!$caseFile) {
+            return redirect()->route('case-file.create')->withErrors(['case_file_token' => 'Case file not found.']);
         }
 
-        // Delete associated timeline_reports
-        DB::table('timeline_reports')
-            ->where('timeline_id', $timeline->id)
+        // Delete associated case_file_incidents
+        DB::table('case_file_incidents')
+            ->where('case_file_id', $caseFile->id)
             ->delete();
 
-        // Delete the timeline
-        DB::table('timelines')
-            ->where('id', $timeline->id)
+        // Delete the case file
+        DB::table('case_files')
+            ->where('id', $caseFile->id)
             ->delete();
 
-        return redirect()->route('timeline.create')->with('success', 'Timeline deleted successfully.');
+        return redirect()->route('case-file.create')->with('success', 'Case file deleted successfully.');
     }
 
      /**
-     * Remove multiple incidents from a timeline.
+    * Remove multiple incidents from a case file.
      */
     public function removeIncidents(Request $request, $tracking_id)
     {
@@ -236,13 +235,13 @@ class TimelineController extends Controller
             ], 400);
         }
 
-        // Find the timeline
-        $timeline = Timeline::byTrackingId($tracking_id)->first();
+        // Find the case file
+        $caseFile = CaseFile::byTrackingId($tracking_id)->first();
 
-        if (!$timeline) {
+        if (!$caseFile) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Timeline not found.'
+                'message' => 'Case file not found.'
             ], 404);
         }
 
@@ -250,17 +249,17 @@ class TimelineController extends Controller
 
         // Remove each incident
         foreach ($incidentTokens as $token) {
-            if ($timeline->removeIncident($token)) {
+            if ($caseFile->removeIncident($token)) {
                 $removedCount++;
             }
         }
 
         return response()->json([
             'status' => 'success',
-            'message' => "Successfully removed {$removedCount} incident(s) from the timeline.",
+            'message' => "Successfully removed {$removedCount} incident(s) from the case file.",
             'data' => [
                 'removed_count' => $removedCount,
-                'remaining_count' => $timeline->incidents()->count()
+                'remaining_count' => $caseFile->incidents()->count()
             ]
         ]);
     }

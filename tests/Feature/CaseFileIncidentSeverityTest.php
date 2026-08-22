@@ -4,12 +4,12 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-it('returns incident severity in the timeline detail payload', function () {
-    Schema::dropIfExists('timeline_reports');
+it('returns incident severity in the case file detail payload', function () {
+    Schema::dropIfExists('case_file_incidents');
     Schema::dropIfExists('incidents');
-    Schema::dropIfExists('timelines');
+    Schema::dropIfExists('case_files');
 
-    Schema::create('timelines', function (Blueprint $table) {
+    Schema::create('case_files', function (Blueprint $table) {
         $table->id();
         $table->string('tracking_id')->unique();
         $table->text('description');
@@ -32,29 +32,29 @@ it('returns incident severity in the timeline detail payload', function () {
         $table->timestamps();
     });
 
-    Schema::create('timeline_reports', function (Blueprint $table) {
+    Schema::create('case_file_incidents', function (Blueprint $table) {
         $table->id();
-        $table->foreignId('timeline_id');
-        $table->string('report_tracking_id');
-        $table->text('report_overview');
-        $table->dateTime('report_incident_date');
-        $table->string('report_platform');
-        $table->string('report_region');
+        $table->foreignId('case_file_id');
+        $table->string('incident_tracking_id');
+        $table->text('incident_overview');
+        $table->dateTime('incident_date');
+        $table->string('incident_platform');
+        $table->string('incident_region');
         $table->string('behavior_type');
         $table->string('severity')->nullable();
         $table->timestamp('added_at')->useCurrent();
         $table->timestamps();
     });
 
-    DB::table('timelines')->insert([
-        'tracking_id' => 'tl-test-001',
-        'description' => 'Test timeline',
+    DB::table('case_files')->insert([
+        'tracking_id' => 'cf-test-001',
+        'description' => 'Test case file',
         'category' => 'Threats',
         'created_at' => now(),
         'updated_at' => now(),
     ]);
 
-    $timelineId = DB::table('timelines')->where('tracking_id', 'tl-test-001')->value('id');
+    $caseFileId = DB::table('case_files')->where('tracking_id', 'cf-test-001')->value('id');
 
     DB::table('incidents')->insert([
         'tracking_id' => 'rp-test-001',
@@ -70,13 +70,13 @@ it('returns incident severity in the timeline detail payload', function () {
         'updated_at' => now(),
     ]);
 
-    DB::table('timeline_reports')->insert([
-        'timeline_id' => $timelineId,
-        'report_tracking_id' => 'rp-test-001',
-        'report_overview' => 'Threatening message received',
-        'report_incident_date' => now(),
-        'report_platform' => 'Instagram',
-        'report_region' => 'Dhaka',
+    DB::table('case_file_incidents')->insert([
+        'case_file_id' => $caseFileId,
+        'incident_tracking_id' => 'rp-test-001',
+        'incident_overview' => 'Threatening message received',
+        'incident_date' => now(),
+        'incident_platform' => 'Instagram',
+        'incident_region' => 'Dhaka',
         'behavior_type' => 'Threats',
         'severity' => 'High',
         'added_at' => now(),
@@ -84,10 +84,10 @@ it('returns incident severity in the timeline detail payload', function () {
         'updated_at' => now(),
     ]);
 
-    $response = $this->getJson('/api/timeline/tl-test-001');
+    $response = $this->getJson('/api/case-files/cf-test-001');
 
     $response
         ->assertStatus(200)
         ->assertJsonPath('status', 'success')
-        ->assertJsonPath('data.reports.0.severity', 'High');
+        ->assertJsonPath('data.incidents.0.severity', 'High');
 });

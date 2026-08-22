@@ -18,7 +18,7 @@ class PanicEvent extends Model
 
     public const SOURCES = ['click', 'hotkey', 'fallback'];
 
-    public const CONTEXTS = ['public', 'wizard', 'timeline', 'dashboard', 'unknown'];
+    public const CONTEXTS = ['public', 'wizard', 'case_file', 'dashboard', 'unknown'];
 
     /**
      * Monthly totals for the admin metrics screen.

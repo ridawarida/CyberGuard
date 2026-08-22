@@ -1,18 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TimelineController;
+use App\Http\Controllers\CaseFileController;
 
 use App\Http\Controllers\Admin\HelpCenterController;
 use App\Http\Controllers\Admin\HotlineController;
 use App\Http\Controllers\AuthController;
 
-Route::get('/timeline/categories', [TimelineController::class, 'categories']);
-Route::post('/timeline', [TimelineController::class, 'store']);
-Route::get('/timeline/{tracking_id}', [TimelineController::class, 'show']);
-Route::post('/timeline/{tracking_id}/report', [TimelineController::class, 'addReport']);
-Route::delete('/timeline/{tracking_id}/report/{report_tracking_id}', [TimelineController::class, 'removeReport']);
-Route::put('/timeline/{tracking_id}', [TimelineController::class, 'update']);
+Route::get('/case-files/categories', [CaseFileController::class, 'categories']);
+Route::post('/case-files', [CaseFileController::class, 'store']);
+Route::get('/case-files/{tracking_id}', [CaseFileController::class, 'show']);
+Route::post('/case-files/{tracking_id}/incidents', [CaseFileController::class, 'addIncident']);
+Route::delete('/case-files/{tracking_id}/incidents/{incident_tracking_id}', [CaseFileController::class, 'removeIncident']);
+Route::put('/case-files/{tracking_id}', [CaseFileController::class, 'update']);
 
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);

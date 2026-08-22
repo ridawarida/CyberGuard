@@ -23,7 +23,7 @@ return new class extends Migration
             $table->enum('trigger_source', ['click', 'hotkey', 'fallback'])->default('click');
 
             // Coarse area of the site only, never a full path or query string.
-            $table->enum('context', ['public', 'wizard', 'timeline', 'dashboard', 'unknown'])
+            $table->enum('context', ['public', 'wizard', 'case_file', 'dashboard', 'unknown'])
                 ->default('unknown');
 
             $table->timestamps();

@@ -18,7 +18,9 @@ class StaffAuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect()->route('moderator.incidents.index');
+            return redirect()->route(Auth::user()->isAdmin()
+                ? 'admin.dashboard'
+                : 'moderator.incidents.index');
         }
 
         return view('auth.login');
@@ -39,7 +41,11 @@ class StaffAuthController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('moderator.incidents.index'));
+        $destination = Auth::user()->isAdmin()
+            ? route('admin.dashboard')
+            : route('moderator.incidents.index');
+
+        return redirect()->intended($destination);
     }
 
     public function logout(Request $request)

@@ -1,22 +1,22 @@
 @extends('layouts.app')
 
-@section('title', 'View Timeline - CyberGuard')
+@section('title', 'View Case File - CyberGuard')
 
 @section('content')
 <div class="container mt-4">
     <div class="row justify-content-center">
         <div class="col-lg-10 col-md-12">
             
-            <!-- Timeline Header -->
-            <div class="timeline-header mb-4">
+            <!-- Case File Header -->
+            <div class="case-file-header mb-4">
                 <div class="d-flex justify-content-between align-items-center flex-wrap">
                     <div>
                         <h2 class="fw-bold" style="color: #1a1a1a; font-size: 28px;">
-                            <i class="fas fa-timeline me-2" style="color: #DC143C;"></i>
-                            Timeline Details
+                            <i class="fas fa-folder-open me-2" style="color: #DC143C;"></i>
+                            Case File Details
                         </h2>
                         <p class="text-muted" style="font-size: 15px;">
-                            Viewing timeline: <code style="background-color: #f5f5f5; padding: 4px 12px; border-radius: 4px; font-weight: 600; color: #DC143C;">{{ $timeline->tracking_id }}</code>
+                            Viewing case file: <code style="background-color: #f5f5f5; padding: 4px 12px; border-radius: 4px; font-weight: 600; color: #DC143C;">{{ $caseFile->tracking_id }}</code>
                         </p>
                     </div>
                     <!-- Save Changes Button (hidden by default, shown when changes are made) -->
@@ -38,14 +38,14 @@
                         <div class="col-md-8">
                             <label class="text-muted small text-uppercase fw-semibold">Case Description</label>
                             <p class="fw-semibold mb-0" style="font-size: 18px; color: #1a1a1a;">
-                                {{ $timeline->description }}
+                                {{ $caseFile->description }}
                             </p>
                         </div>
                         <div class="col-md-4">
                             <label class="text-muted small text-uppercase fw-semibold">Tagged with</label>
                             <div>
                                 <span class="badge" style="background-color: #DC143C; font-size: 14px; padding: 6px 16px; border-radius: 20px;">
-                                    <i class="fas fa-tag me-1"></i> {{ $timeline->category }}
+                                    <i class="fas fa-tag me-1"></i> {{ $caseFile->category }}
                                 </span>
                             </div>
                         </div>
@@ -56,13 +56,13 @@
             <!-- Incidents List Container -->
             <div class="incidents-container" style="background-color: #D9D9D9; border-radius: 12px; padding: 25px 20px;">
                 
-                @if($timeline->incidents->count() > 0)
-                    @foreach($timeline->incidents as $incident)
+                @if($caseFile->incidents->count() > 0)
+                    @foreach($caseFile->incidents as $incident)
                     <div class="incident-card bg-white p-4 mb-3 rounded-3 shadow-sm" data-incident-token="{{ $incident->tracking_id }}" style="border-left: 4px solid #DC143C;">
                         <div class="d-flex justify-content-between align-items-start flex-wrap">
                             <div>
                                 <h5 class="fw-bold mb-1" style="color: #1a1a1a; font-size: 17px;">
-                                    Report # {{ $incident->tracking_id }}
+                                    Incident # {{ $incident->tracking_id }}
                                 </h5>
                                 <p class="text-muted small mb-1">
                                     <i class="fas fa-calendar-alt me-1" style="color: #DC143C;"></i>
@@ -73,8 +73,8 @@
                                 </p>
                             </div>
                             <div class="mt-2 mt-sm-0 d-flex gap-2">
-                                <button class="btn btn-crimson-outline btn-sm view-report-btn" onclick="alert('View Report functionality coming soon!')" style="white-space: nowrap;">
-                                    <i class="fas fa-eye me-1"></i> View Report
+                                <button class="btn btn-crimson-outline btn-sm view-incident-btn" onclick="alert('View Incident functionality coming soon!')" style="white-space: nowrap;">
+                                    <i class="fas fa-eye me-1"></i> View Incident
                                 </button>
                                 <button class="btn btn-outline-danger btn-sm remove-incident-btn" 
                                         data-incident-token="{{ $incident->tracking_id }}"
@@ -89,22 +89,22 @@
                 @else
                     <div class="text-center py-5">
                         <i class="fas fa-inbox" style="font-size: 48px; color: #b0b0b0;"></i>
-                        <p class="text-muted mt-3" style="font-size: 16px;">No incidents have been added to this timeline yet.</p>
+                        <p class="text-muted mt-3" style="font-size: 16px;">No incidents have been added to this case file yet.</p>
                     </div>
                 @endif
 
                 <!-- Incident Count -->
                 <div class="mt-3 text-muted small">
                     <i class="fas fa-file-alt me-1"></i> 
-                    <span id="incidentCount">{{ $timeline->incidents->count() }}</span> incident(s) in this timeline
+                    <span id="incidentCount">{{ $caseFile->incidents->count() }}</span> incident(s) in this case file
                 </div>
 
             </div>
 
             <!-- Back Button -->
             <div class="mt-4 text-center">
-                <a href="{{ route('timeline.create') }}" class="btn btn-outline-secondary">
-                    <i class="fas fa-arrow-left me-1"></i> Back to Timeline Page
+                <a href="{{ route('case-file.create') }}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Case File Page
                 </a>
             </div>
 
@@ -125,14 +125,14 @@
             </div>
             <div class="modal-body">
                 <p class="mb-2" style="font-size: 16px;">
-                    Are you sure you want to remove this incident from the timeline?
+                    Are you sure you want to remove this incident from the case file?
                 </p>
                 <div class="bg-light p-3 rounded-3">
                     <p class="mb-1"><strong>Incident Token:</strong> <code id="modalIncidentToken">-</code></p>
                     <p class="mb-0"><strong>Overview:</strong> <span id="modalIncidentOverview">-</span></p>
                 </div>
                 <p class="text-muted small mt-2">
-                    <i class="fas fa-info-circle me-1"></i> This incident will be removed from the timeline, but the original incident report will remain in the system.
+                    <i class="fas fa-info-circle me-1"></i> This incident will be removed from the case file, but the original incident will remain in the system.
                 </p>
             </div>
             <div class="modal-footer">
@@ -160,7 +160,7 @@
             </div>
             <div class="modal-body">
                 <p style="font-size: 16px;">
-                    You have removed <span id="removedCount">0</span> incident(s) from this timeline.
+                    You have removed <span id="removedCount">0</span> incident(s) from this case file.
                 </p>
                 <p class="text-muted small">
                     <i class="fas fa-info-circle me-1"></i> Click "Save" to permanently remove these incidents, or "Cancel" to undo all changes.
@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function() {
         formData.append('incidents_to_remove', JSON.stringify(removedIncidents));
 
         // Send request
-        fetch('{{ route("timeline.removeIncidents", $timeline->tracking_id) }}', {
+        fetch('{{ route("case-file.removeIncidents", $caseFile->tracking_id) }}', {
             method: 'POST',
             body: formData
         })
@@ -392,12 +392,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 saveModal.hide();
 
                 // Show success message
-                alert(data.message || 'Timeline updated successfully!');
+                alert(data.message || 'Case file updated successfully!');
 
                 // Reload page to reflect changes
                 window.location.reload();
             } else {
-                alert(data.message || 'Failed to update timeline.');
+                alert(data.message || 'Failed to update case file.');
             }
         })
         .catch(error => {

@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
         // Seed help centers and hotlines
         $this->call(HelpCenterSeeder::class);
 
-        // Seed application data (incidents, timelines, reports)
+        // Seed application data (incidents, case files, case-file incidents)
         $this->call(CyberGuardDataSeeder::class);
 
         // Johra - Module 1: default panic button configuration

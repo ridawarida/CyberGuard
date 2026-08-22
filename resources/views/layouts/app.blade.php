@@ -153,29 +153,29 @@
             font-weight: 400;
         }
         
-        .view-timeline-section {
+        .view-case-file-section {
             text-align: center;
             padding: 25px 20px 50px 20px;
         }
         
-        .view-timeline-section .input-group {
+        .view-case-file-section .input-group {
             max-width: 550px;
             margin: 0 auto;
         }
         
-        .view-timeline-section .input-group input {
+        .view-case-file-section .input-group input {
             font-family: 'Cairo', sans-serif;
             padding: 10px 16px;
             border-radius: 6px 0 0 6px;
             border: 1px solid #d0d0d0;
         }
         
-        .view-timeline-section .input-group input:focus {
+        .view-case-file-section .input-group input:focus {
             border-color: #DC143C;
             box-shadow: 0 0 0 0.2rem rgba(220, 20, 60, 0.15);
         }
         
-        .view-timeline-section .input-group .btn {
+        .view-case-file-section .input-group .btn {
             border-radius: 0 6px 6px 0;
         }
         
@@ -220,7 +220,7 @@
                 font-size: 13px;
             }
             
-            .view-timeline-section .input-group {
+            .view-case-file-section .input-group {
                 max-width: 100%;
                 padding: 0 10px;
             }
@@ -245,9 +245,14 @@
 <body>
     <!-- Crimson Header -->
     <header class="crimson-header">
-        <a href="{{ url('/') }}" class="brand">
-            <i class="fas fa-shield-alt"></i> CyberGuard
-        </a>
+        <div class="d-flex justify-content-between align-items-center gap-3">
+            <a href="{{ route('home') }}" class="brand">
+                <i class="fas fa-shield-alt"></i> CyberGuard
+            </a>
+            <a href="{{ route('home') }}" class="btn btn-light btn-sm text-danger fw-semibold">
+                <i class="fas fa-house me-1"></i> Home
+            </a>
+        </div>
     </header>
 
     <!-- Main Content -->
@@ -259,7 +264,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')
 
-    {{-- Johra - Module 1: Quick Escape Panic Button --}}
-    @include('partials.panic-button')
+    @guest
+        {{-- Quick escape is available on public victim-facing pages only. --}}
+        @include('partials.panic-button')
+    @endguest
 </body>
 </html>

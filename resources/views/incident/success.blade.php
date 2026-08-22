@@ -10,7 +10,7 @@
             <h2 class="mb-3">Report Submitted Successfully</h2>
             <p class="text-muted mb-4">
                 Your report has been received. Please save your tracking code below —
-                you'll need it to check the status of your case or link it to a timeline later.
+                you'll need it to check the status of your case or link it to a case file later.
             </p>
 
             <div class="alert alert-danger">

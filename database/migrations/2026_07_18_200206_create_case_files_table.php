@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('timelines', function (Blueprint $table) {
+        Schema::create('case_files', function (Blueprint $table) {
             $table->id();
             $table->string('tracking_id')->unique();
             $table->text('description');
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('timelines');
+        Schema::dropIfExists('case_files');
     }
 };

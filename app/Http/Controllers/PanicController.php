@@ -120,8 +120,8 @@ class PanicController extends Controller
             'incident_wizard.overview',
             'incident_wizard.evidence_image',
             'incident_wizard.tracking_id',
-            'timeline_wizard',
-            'timeline_incidents',
+            'case_file_wizard',
+            'case_file_incidents',
         ]);
 
         if (Auth::guard('web')->check()) {

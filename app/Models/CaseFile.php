@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-class Timeline extends Model
+class CaseFile extends Model
 {
-    protected $table = 'timelines';
+    protected $table = 'case_files';
 
     protected $fillable = [
         'id',
@@ -20,50 +20,50 @@ class Timeline extends Model
     {
         parent::boot();
 
-        static::creating(function ($timeline) {
-            if (empty($timeline->tracking_id)) {
-                $timeline->tracking_id = self::generateTrackingId();
+        static::creating(function ($caseFile) {
+            if (empty($caseFile->tracking_id)) {
+                $caseFile->tracking_id = self::generateTrackingId();
             }
         });
     }
 
     /**
-     * Generate a unique tracking ID for the timeline.
+    * Generate a unique tracking ID for the case file.
      */
     public static function generateTrackingId(): string
     {
         do {
-            $trackingId = 'tl' . Str::random(12);
+            $trackingId = 'cf' . Str::random(12);
         } while (self::where('tracking_id', $trackingId)->exists());
 
         return $trackingId;
     }
 
     /**
-     * Get the timeline reports associated with this timeline.
+    * Get the incident entries associated with this case file.
      */
-    public function timelineReports()
+    public function caseFileIncidents()
     {
-        return $this->hasMany(TimelineReport::class, 'timeline_id', 'id');
+        return $this->hasMany(CaseFileIncident::class, 'case_file_id', 'id');
     }
 
     /**
-     * Get all incidents linked through timeline_reports.
+    * Get all incidents linked through case_file_incidents.
      */
     public function incidents()
     {
         return $this->belongsToMany(
             Incident::class,
-            'timeline_reports',
-            'timeline_id',
-            'report_tracking_id',
+            'case_file_incidents',
+            'case_file_id',
+            'incident_tracking_id',
             'id',
             'tracking_id'
         );
     }
 
     /**
-     * Scope a query to only include timelines by tracking_id.
+    * Scope a query to only include case files by tracking_id.
      */
     public function scopeByTrackingId($query, $trackingId)
     {
@@ -71,7 +71,7 @@ class Timeline extends Model
     }
 
     /**
-     * Scope a query to only include timelines by category.
+    * Scope a query to only include case files by category.
      */
     public function scopeByCategory($query, $category)
     {
@@ -79,31 +79,31 @@ class Timeline extends Model
     }
 
     /**
-     * Get the earliest incident date in this timeline.
+    * Get the earliest incident date in this case file.
      */
     public function getEarliestIncidentDateAttribute()
     {
-        $report = $this->timelineReports()
-            ->orderBy('report_incident_date', 'asc')
+        $incident = $this->caseFileIncidents()
+            ->orderBy('incident_date', 'asc')
             ->first();
 
-        return $report ? $report->report_incident_date : null;
+        return $incident ? $incident->incident_date : null;
     }
 
     /**
-     * Get the latest incident date in this timeline.
+    * Get the latest incident date in this case file.
      */
     public function getLatestIncidentDateAttribute()
     {
-        $report = $this->timelineReports()
-            ->orderBy('report_incident_date', 'desc')
+        $incident = $this->caseFileIncidents()
+            ->orderBy('incident_date', 'desc')
             ->first();
 
-        return $report ? $report->report_incident_date : null;
+        return $incident ? $incident->incident_date : null;
     }
 
     /**
-     * Get the date range string for this timeline.
+    * Get the date range string for this case file.
      */
     public function getDateRangeAttribute()
     {
@@ -122,40 +122,40 @@ class Timeline extends Model
     }
 
     /**
-     * Check if the timeline has any incidents.
+    * Check if the case file has any incidents.
      */
     public function hasIncidents(): bool
     {
-        return $this->timelineReports()->count() > 0;
+        return $this->caseFileIncidents()->count() > 0;
     }
 
     /**
-     * Get the incident count for this timeline.
+    * Get the incident count for this case file.
      */
     public function getIncidentCountAttribute()
     {
-        return $this->timelineReports()->count();
+        return $this->caseFileIncidents()->count();
     }
 
     /**
-     * Add an incident to this timeline.
+    * Add an incident to this case file.
      */
-    public function addIncident(Incident $incident): TimelineReport
+    public function addIncident(Incident $incident): CaseFileIncident
     {
-        // Check if incident already belongs to ANY timeline
-        if ($incident->hasTimeline()) {
-            $currentTimeline = $incident->getCurrentTimeline();
-            $currentToken = $currentTimeline ? $currentTimeline->tracking_id : 'unknown';
+        // Check if incident already belongs to any case file.
+        if ($incident->hasCaseFile()) {
+            $currentCaseFile = $incident->getCurrentCaseFile();
+            $currentToken = $currentCaseFile ? $currentCaseFile->tracking_id : 'unknown';
             
-            throw new \Exception("Incident '{$incident->tracking_id}' already belongs to timeline '{$currentToken}'.");
+            throw new \Exception("Incident '{$incident->tracking_id}' already belongs to case file '{$currentToken}'.");
         }
 
-        return $this->timelineReports()->create([
-            'report_tracking_id' => $incident->tracking_id,
-            'report_overview' => $incident->overview ?? $incident->description,
-            'report_incident_date' => $incident->incident_date,
-            'report_platform' => $incident->platform,
-            'report_region' => $incident->region,
+        return $this->caseFileIncidents()->create([
+            'incident_tracking_id' => $incident->tracking_id,
+            'incident_overview' => $incident->overview ?? $incident->description,
+            'incident_date' => $incident->incident_date,
+            'incident_platform' => $incident->platform,
+            'incident_region' => $incident->region,
             'behavior_type' => $incident->behavior_type,
             'severity' => $incident->severity ?? null,
             'added_at' => now(),
@@ -164,45 +164,45 @@ class Timeline extends Model
 
     public function canAddIncident(Incident $incident): bool
     {
-        // If incident already has a timeline, it cannot be added
-        if ($incident->hasTimeline()) {
+        // If incident already has a case file, it cannot be added
+        if ($incident->hasCaseFile()) {
             return false;
         }
         return true;
     }
 
     /**
-     * Remove an incident from this timeline.
+    * Remove an incident from this case file.
      */
     public function removeIncident(string $incidentTrackingId): bool
     {
-        return $this->timelineReports()
-            ->where('report_tracking_id', $incidentTrackingId)
+        return $this->caseFileIncidents()
+            ->where('incident_tracking_id', $incidentTrackingId)
             ->delete() > 0;
     }
 
     /**
-     * Check if an incident belongs to this timeline.
+    * Check if an incident belongs to this case file.
      */
     public function hasIncident(string $incidentTrackingId): bool
     {
-        return $this->timelineReports()
-            ->where('report_tracking_id', $incidentTrackingId)
+        return $this->caseFileIncidents()
+            ->where('incident_tracking_id', $incidentTrackingId)
             ->exists();
     }
 
     /**
-     * Get all incident tracking IDs in this timeline.
+    * Get all incident tracking IDs in this case file.
      */
     public function getIncidentTrackingIdsAttribute()
     {
-        return $this->timelineReports()
-            ->pluck('report_tracking_id')
+        return $this->caseFileIncidents()
+            ->pluck('incident_tracking_id')
             ->toArray();
     }
 
     /**
-     * Get a formatted summary of the timeline.
+    * Get a formatted summary of the case file.
      */
     public function getSummaryAttribute(): array
     {

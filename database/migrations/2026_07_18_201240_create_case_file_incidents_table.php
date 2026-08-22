@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('timeline_reports', function (Blueprint $table) {
+        Schema::create('case_file_incidents', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('timeline_id')->constrained()->onDelete('cascade');
-            $table->string('report_tracking_id');
-            $table->text('report_overview');
-            $table->dateTime('report_incident_date');
-            $table->string('report_platform');
-            $table->string('report_region');
+            $table->foreignId('case_file_id')->constrained('case_files')->onDelete('cascade');
+            $table->string('incident_tracking_id');
+            $table->text('incident_overview');
+            $table->dateTime('incident_date');
+            $table->string('incident_platform');
+            $table->string('incident_region');
             $table->string('behavior_type');
             $table->string('severity')->nullable();
             $table->timestamp('added_at')->useCurrent();
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('timeline_reports');
+        Schema::dropIfExists('case_file_incidents');
     }
 };

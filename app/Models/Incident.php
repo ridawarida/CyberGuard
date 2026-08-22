@@ -37,41 +37,41 @@ class Incident extends Model
     ];
 
     // Relationships
-    public function timelineReports()
+    public function caseFileIncidents()
     {
-        return $this->hasMany(TimelineReport::class, 'report_tracking_id', 'tracking_id');
+        return $this->hasMany(CaseFileIncident::class, 'incident_tracking_id', 'tracking_id');
     }
 
-    public function timelines()
+    public function caseFiles()
     {
         return $this->belongsToMany(
-            Timeline::class,
-            'timeline_reports',
-            'report_tracking_id',
-            'timeline_id',
+            CaseFile::class,
+            'case_file_incidents',
+            'incident_tracking_id',
+            'case_file_id',
             'tracking_id',
             'id'
         );
     }
 
-    //Check if incident is already in ANY timeline
-    public function hasTimeline(): bool
+    // Check if incident is already in any case file.
+    public function hasCaseFile(): bool
     {
-        return $this->timelineReports()->count() > 0;
+        return $this->caseFileIncidents()->count() > 0;
     }
 
-    //Get the timeline this incident belongs to (if any)
-    public function getCurrentTimeline()
+    // Get the case file this incident belongs to (if any).
+    public function getCurrentCaseFile()
     {
-        $timelineReport = $this->timelineReports()->first();
-        return $timelineReport ? $timelineReport->timeline : null;
+        $caseFileIncident = $this->caseFileIncidents()->first();
+        return $caseFileIncident ? $caseFileIncident->caseFile : null;
     }
 
-    //Get the tracking ID of the timeline this incident belongs to
-    public function getCurrentTimelineTokenAttribute()
+    // Get the tracking ID of the case file this incident belongs to.
+    public function getCurrentCaseFileTokenAttribute()
     {
-        $timeline = $this->getCurrentTimeline();
-        return $timeline ? $timeline->tracking_id : null;
+        $caseFile = $this->getCurrentCaseFile();
+        return $caseFile ? $caseFile->tracking_id : null;
     }
 
     // Scope

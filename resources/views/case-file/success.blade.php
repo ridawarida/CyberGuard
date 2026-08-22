@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Timeline Created - CyberGuard')
+@section('title', 'Case File Created - CyberGuard')
 
 @section('content')
 <div class="container mt-5">
@@ -21,9 +21,9 @@
                     <!-- Message -->
                     <h3 class="mb-3" style="font-weight: 700; color: #1a1a1a;">
                         @if($is_new)
-                            Your Timeline has been created!
+                            Your Case File has been created!
                         @else
-                            Your Timeline has been edited!
+                            Your Case File has been edited!
                         @endif
                     </h3>
 
@@ -35,7 +35,7 @@
                     <div class="mb-4">
                         <div class="bg-light p-3 rounded-3 d-inline-block" style="border: 2px dashed #DC143C;">
                             <code style="font-size: 24px; font-weight: 700; color: #DC143C; letter-spacing: 1px;">
-                                {{ $data['timeline_token'] ?? 'tlXXXXXXXXXXXX' }}
+                                {{ $data['case_file_token'] ?? 'cfXXXXXXXXXXXX' }}
                             </code>
                         </div>
                         <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyToken()">
@@ -43,7 +43,7 @@
                         </button>
                     </div>
 
-                    <!-- Timeline Summary -->
+                    <!-- Case File Summary -->
                     <div class="text-start bg-light p-3 rounded-3 mb-4" style="max-width: 500px; margin: 0 auto;">
                         <p class="mb-1"><strong>Description:</strong> {{ $data['description'] ?? 'N/A' }}</p>
                         <p class="mb-1"><strong>Category:</strong> {{ $data['category'] ?? 'N/A' }}</p>
@@ -51,8 +51,8 @@
                     </div>
 
                     <!-- Return Button -->
-                    <a href="{{ route('timeline.create') }}" class="btn btn-crimson">
-                        <i class="fas fa-arrow-left me-1"></i> Return to Timeline Page
+                    <a href="{{ route('case-file.create') }}" class="btn btn-crimson">
+                        <i class="fas fa-arrow-left me-1"></i> Return to Case File Page
                     </a>
 
                 </div>
@@ -89,7 +89,7 @@
 
 <script>
     function copyToken() {
-        const token = '{{ $data['timeline_token'] ?? 'tlXXXXXXXXXXXX' }}';
+        const token = '{{ $data['case_file_token'] ?? 'cfXXXXXXXXXXXX' }}';
         navigator.clipboard.writeText(token).then(() => {
             alert('Token copied to clipboard!');
         }).catch(() => {

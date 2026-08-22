@@ -1,33 +1,35 @@
 <?php
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\TimelineWizardController;
-use App\Http\Controllers\TimelineController;
+use App\Http\Controllers\CaseFileWizardController;
+use App\Http\Controllers\CaseFileController;
 use App\Http\Controllers\IncidentWizardController;
 use App\Http\Controllers\StaffAuthController;
+use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\Admin\HelpDirectoryController;
 use App\Http\Controllers\Moderator\IncidentReviewController;
-use App\Models\Timeline;
+use App\Models\CaseFile;
 use App\Http\Controllers\TicketStatusController;
 
-// Guest/Anonymous routes for Timeline
-Route::get('/timeline/create', function () {
-    return view('timeline.create');
-})->name('timeline.create');
+// Guest/Anonymous routes for case files
+Route::get('/case-files/create', function () {
+    return view('case-file.create');
+})->name('case-file.create');
 
-// Timeline Wizard Routes
-Route::prefix('timeline/wizard')->name('timeline.wizard.')->group(function () {
-    Route::get('/step1', [TimelineWizardController::class, 'step1'])->name('step1');
-    Route::post('/step1', [TimelineWizardController::class, 'postStep1'])->name('postStep1');
+// Case File Wizard Routes
+Route::prefix('case-files/wizard')->name('case-file.wizard.')->group(function () {
+    Route::get('/step1', [CaseFileWizardController::class, 'step1'])->name('step1');
+    Route::post('/step1', [CaseFileWizardController::class, 'postStep1'])->name('postStep1');
     
-    Route::get('/step2', [TimelineWizardController::class, 'step2'])->name('step2');
-    Route::post('/add-incident', [TimelineWizardController::class, 'addIncident'])->name('addIncident');
-    Route::post('/remove-incident/{index}', [TimelineWizardController::class, 'removeIncident'])->name('removeIncident');
-    Route::post('/step2', [TimelineWizardController::class, 'postStep2'])->name('postStep2');
+    Route::get('/step2', [CaseFileWizardController::class, 'step2'])->name('step2');
+    Route::post('/add-incident', [CaseFileWizardController::class, 'addIncident'])->name('addIncident');
+    Route::post('/remove-incident/{index}', [CaseFileWizardController::class, 'removeIncident'])->name('removeIncident');
+    Route::post('/step2', [CaseFileWizardController::class, 'postStep2'])->name('postStep2');
     
-    Route::get('/step3', [TimelineWizardController::class, 'step3'])->name('step3');
-    Route::post('/step3', [TimelineWizardController::class, 'postStep3'])->name('postStep3');
+    Route::get('/step3', [CaseFileWizardController::class, 'step3'])->name('step3');
+    Route::post('/step3', [CaseFileWizardController::class, 'postStep3'])->name('postStep3');
     
-    Route::get('/success', [TimelineWizardController::class, 'success'])->name('success');
-    Route::get('/reset', [TimelineWizardController::class, 'reset'])->name('reset');
+    Route::get('/success', [CaseFileWizardController::class, 'success'])->name('success');
+    Route::get('/reset', [CaseFileWizardController::class, 'reset'])->name('reset');
 });
 
 // Incident Wizard Routes
@@ -45,25 +47,25 @@ Route::prefix('incident/wizard')->name('incident.wizard.')->group(function () {
 Route::get('/ticket-status', [TicketStatusController::class, 'index'])->name('ticket.status.index');
 Route::post('/ticket-status', [TicketStatusController::class, 'search'])->name('ticket.status.search');
 
-// View existing timeline
-Route::get('/timeline/view/{tracking_id}', function ($tracking_id) {
-    $timeline = Timeline::with('incidents')->byTrackingId($tracking_id)->first();
+// View existing case file
+Route::get('/case-files/view/{tracking_id}', function ($tracking_id) {
+    $caseFile = CaseFile::with('incidents')->byTrackingId($tracking_id)->first();
     
-    if (!$timeline) {
-        abort(404, 'Timeline not found');
+    if (!$caseFile) {
+        abort(404, 'Case file not found');
     }
-    return view('timeline.view', ['timeline' => $timeline]);
-})->name('timeline.view');
+    return view('case-file.view', ['caseFile' => $caseFile]);
+})->name('case-file.view');
 
-Route::post('/timeline/{tracking_id}/remove-incidents', [TimelineController::class, 'removeIncidents'])
-    ->name('timeline.removeIncidents');
+Route::post('/case-files/{tracking_id}/remove-incidents', [CaseFileController::class, 'removeIncidents'])
+    ->name('case-file.removeIncidents');
 
 //home default
 Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
-Route::post('/timeline/delete', [TimelineController::class, 'destroy'])->name('timeline.delete');
+Route::post('/case-files/delete', [CaseFileController::class, 'destroy'])->name('case-file.delete');
 
 // Johra - Module 1: Quick Escape Panic Button routes.
 require __DIR__ . '/panic.php';
@@ -77,6 +79,15 @@ require __DIR__ . '/panic.php';
 Route::get('/staff/login', [StaffAuthController::class, 'showLogin'])->name('staff.login');
 Route::post('/staff/login', [StaffAuthController::class, 'login'])->name('staff.login.submit');
 Route::post('/staff/logout', [StaffAuthController::class, 'logout'])->name('staff.logout');
+
+Route::middleware('staff:admin')->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    Route::get('/help-directory', [HelpDirectoryController::class, 'index'])->name('help-directory.index');
+    Route::post('/help-directory', [HelpDirectoryController::class, 'store'])->name('help-directory.store');
+    Route::put('/help-directory/{helpCenter}', [HelpDirectoryController::class, 'update'])->name('help-directory.update');
+    Route::delete('/help-directory/{helpCenter}', [HelpDirectoryController::class, 'destroy'])->name('help-directory.destroy');
+});
 
 /*
 |--------------------------------------------------------------------------

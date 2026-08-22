@@ -49,7 +49,7 @@ it('clears wizard draft data from the session when triggered', function () {
 
     $this->withSession([
         'incident_wizard' => ['description' => 'he keeps messaging me'],
-        'timeline_incidents' => [['summary' => 'threatening dm']],
+        'case_file_incidents' => [['summary' => 'threatening dm']],
     ]);
 
     $response = $this->postJson('/panic/trigger', [
@@ -62,7 +62,7 @@ it('clears wizard draft data from the session when triggered', function () {
         ->assertJsonPath('data.redirect_url', PanicSetting::FALLBACK['decoy_url']);
 
     $this->assertNull(session('incident_wizard'));
-    $this->assertNull(session('timeline_incidents'));
+    $this->assertNull(session('case_file_incidents'));
 });
 
 it('asks the browser to wipe its own storage', function () {
@@ -76,13 +76,13 @@ it('asks the browser to wipe its own storage', function () {
 it('records an anonymous event without any identifying column', function () {
     activePanicSetting(['log_events' => true]);
 
-    $this->postJson('/panic/trigger', ['source' => 'hotkey', 'context' => 'timeline']);
+    $this->postJson('/panic/trigger', ['source' => 'hotkey', 'context' => 'case_file']);
 
     $event = PanicEvent::latest('id')->first();
 
     expect($event)->not->toBeNull()
         ->and($event->trigger_source)->toBe('hotkey')
-        ->and($event->context)->toBe('timeline')
+        ->and($event->context)->toBe('case_file')
         ->and(array_keys($event->getAttributes()))
         ->not->toContain('ip_address', 'user_id', 'session_id');
 });
@@ -153,7 +153,7 @@ it('lets an admin change the decoy site', function () {
 it('renders the floating escape button on victim facing pages', function () {
     activePanicSetting();
 
-    $this->get('/timeline/create')
+    $this->get('/case-files/create')
         ->assertStatus(200)
         ->assertSee('data-panic-button', false)
         ->assertSee('Quick Escape')
@@ -163,7 +163,7 @@ it('renders the floating escape button on victim facing pages', function () {
 it('ships a csrf token and a no javascript fallback form', function () {
     activePanicSetting();
 
-    $this->get('/timeline/create')
+    $this->get('/case-files/create')
         ->assertSee('name="csrf-token"', false)
         ->assertSee(route('panic.escape'), false);
 });

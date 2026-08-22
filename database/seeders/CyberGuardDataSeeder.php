@@ -134,8 +134,8 @@ class CyberGuardDataSeeder extends Seeder
             );
         }
 
-        // Insert timelines
-        $timelines = [
+        // Insert case files
+        $caseFiles = [
             [
                 'tracking_id' => 'tl7X9b2K1pQ4z8w3M',
                 'description' => 'Instagram stalking and harassment from January 2025',
@@ -159,23 +159,23 @@ class CyberGuardDataSeeder extends Seeder
             ],
         ];
 
-        foreach ($timelines as $timeline) {
-            DB::table('timelines')->updateOrInsert(
-                ['tracking_id' => $timeline['tracking_id']],
-                $timeline
+        foreach ($caseFiles as $caseFile) {
+            DB::table('case_files')->updateOrInsert(
+                ['tracking_id' => $caseFile['tracking_id']],
+                $caseFile
             );
         }
 
-        // Insert timeline_reports
-        $timelineReports = [
-            // Timeline 1 (Stalking)
+        // Insert case_file_incidents
+        $caseFileIncidents = [
+            // Case file 1 (Stalking)
             [
-                'timeline_id' => 1,
-                'report_tracking_id' => 'rp4X9b2K1pQ4z8w3M',
-                'report_overview' => 'First threatening message received',
-                'report_incident_date' => Carbon::parse('2025-01-05 10:30:00'),
-                'report_platform' => 'Instagram',
-                'report_region' => 'Dhaka',
+                'case_file_id' => 1,
+                'incident_tracking_id' => 'rp4X9b2K1pQ4z8w3M',
+                'incident_overview' => 'First threatening message received',
+                'incident_date' => Carbon::parse('2025-01-05 10:30:00'),
+                'incident_platform' => 'Instagram',
+                'incident_region' => 'Dhaka',
                 'behavior_type' => 'Threats',
                 'severity' => 'High',
                 'added_at' => Carbon::parse('2025-01-20 14:35:00'),
@@ -183,12 +183,12 @@ class CyberGuardDataSeeder extends Seeder
                 'updated_at' => Carbon::parse('2025-01-20 14:35:00'),
             ],
             [
-                'timeline_id' => 1,
-                'report_tracking_id' => 'rp2Z8d5M3sT6b1y7P',
-                'report_overview' => 'Escalation after blocking first account',
-                'report_incident_date' => Carbon::parse('2025-01-15 14:30:00'),
-                'report_platform' => 'Instagram',
-                'report_region' => 'Dhaka',
+                'case_file_id' => 1,
+                'incident_tracking_id' => 'rp2Z8d5M3sT6b1y7P',
+                'incident_overview' => 'Escalation after blocking first account',
+                'incident_date' => Carbon::parse('2025-01-15 14:30:00'),
+                'incident_platform' => 'Instagram',
+                'incident_region' => 'Dhaka',
                 'behavior_type' => 'Threats',
                 'severity' => 'High',
                 'added_at' => Carbon::parse('2025-01-20 14:40:00'),
@@ -196,26 +196,26 @@ class CyberGuardDataSeeder extends Seeder
                 'updated_at' => Carbon::parse('2025-01-20 14:40:00'),
             ],
             [
-                'timeline_id' => 1,
-                'report_tracking_id' => 'rp8V6f2M4sU5e9y3T',
-                'report_overview' => 'Continued stalking and threats',
-                'report_incident_date' => Carbon::parse('2025-01-28 18:45:00'),
-                'report_platform' => 'Instagram',
-                'report_region' => 'Barishal',
+                'case_file_id' => 1,
+                'incident_tracking_id' => 'rp8V6f2M4sU5e9y3T',
+                'incident_overview' => 'Continued stalking and threats',
+                'incident_date' => Carbon::parse('2025-01-28 18:45:00'),
+                'incident_platform' => 'Instagram',
+                'incident_region' => 'Barishal',
                 'behavior_type' => 'Stalking',
                 'severity' => 'High',
                 'added_at' => Carbon::parse('2025-01-28 19:00:00'),
                 'created_at' => Carbon::parse('2025-01-28 19:00:00'),
                 'updated_at' => Carbon::parse('2025-01-28 19:00:00'),
             ],
-            // Timeline 2 (Impersonation)
+            // Case file 2 (Impersonation)
             [
-                'timeline_id' => 2,
-                'report_tracking_id' => 'rp7Y3c4L2qR5a9x4N',
-                'report_overview' => 'Fake Instagram account discovered',
-                'report_incident_date' => Carbon::parse('2025-01-10 15:20:00'),
-                'report_platform' => 'Facebook',
-                'report_region' => 'Chattogram',
+                'case_file_id' => 2,
+                'incident_tracking_id' => 'rp7Y3c4L2qR5a9x4N',
+                'incident_overview' => 'Fake Instagram account discovered',
+                'incident_date' => Carbon::parse('2025-01-10 15:20:00'),
+                'incident_platform' => 'Facebook',
+                'incident_region' => 'Chattogram',
                 'behavior_type' => 'Impersonation',
                 'severity' => 'Medium',
                 'added_at' => Carbon::parse('2025-01-21 10:05:00'),
@@ -223,26 +223,26 @@ class CyberGuardDataSeeder extends Seeder
                 'updated_at' => Carbon::parse('2025-01-21 10:05:00'),
             ],
             [
-                'timeline_id' => 2,
-                'report_tracking_id' => 'rp9X4c7N2qR8b2y5Q',
-                'report_overview' => 'Malicious video posted on TikTok',
-                'report_incident_date' => Carbon::parse('2025-01-20 09:15:00'),
-                'report_platform' => 'TikTok',
-                'report_region' => 'Sylhet',
+                'case_file_id' => 2,
+                'incident_tracking_id' => 'rp9X4c7N2qR8b2y5Q',
+                'incident_overview' => 'Malicious video posted on TikTok',
+                'incident_date' => Carbon::parse('2025-01-20 09:15:00'),
+                'incident_platform' => 'TikTok',
+                'incident_region' => 'Sylhet',
                 'behavior_type' => 'Harassment',
                 'severity' => 'Medium',
                 'added_at' => Carbon::parse('2025-01-21 10:10:00'),
                 'created_at' => Carbon::parse('2025-01-21 10:10:00'),
                 'updated_at' => Carbon::parse('2025-01-21 10:10:00'),
             ],
-            // Timeline 3 (Threats)
+            // Case file 3 (Threats)
             [
-                'timeline_id' => 3,
-                'report_tracking_id' => 'rp4X9b2K1pQ4z8w3M',
-                'report_overview' => 'First threatening message',
-                'report_incident_date' => Carbon::parse('2025-01-05 10:30:00'),
-                'report_platform' => 'Instagram',
-                'report_region' => 'Dhaka',
+                'case_file_id' => 3,
+                'incident_tracking_id' => 'rp4X9b2K1pQ4z8w3M',
+                'incident_overview' => 'First threatening message',
+                'incident_date' => Carbon::parse('2025-01-05 10:30:00'),
+                'incident_platform' => 'Instagram',
+                'incident_region' => 'Dhaka',
                 'behavior_type' => 'Threats',
                 'severity' => 'High',
                 'added_at' => Carbon::parse('2025-01-22 08:10:00'),
@@ -250,12 +250,12 @@ class CyberGuardDataSeeder extends Seeder
                 'updated_at' => Carbon::parse('2025-01-22 08:10:00'),
             ],
             [
-                'timeline_id' => 3,
-                'report_tracking_id' => 'rp2Z8d5M3sT6b1y7P',
-                'report_overview' => 'Second threatening message after block',
-                'report_incident_date' => Carbon::parse('2025-01-15 14:30:00'),
-                'report_platform' => 'Instagram',
-                'report_region' => 'Dhaka',
+                'case_file_id' => 3,
+                'incident_tracking_id' => 'rp2Z8d5M3sT6b1y7P',
+                'incident_overview' => 'Second threatening message after block',
+                'incident_date' => Carbon::parse('2025-01-15 14:30:00'),
+                'incident_platform' => 'Instagram',
+                'incident_region' => 'Dhaka',
                 'behavior_type' => 'Threats',
                 'severity' => 'High',
                 'added_at' => Carbon::parse('2025-01-22 08:15:00'),
@@ -263,12 +263,12 @@ class CyberGuardDataSeeder extends Seeder
                 'updated_at' => Carbon::parse('2025-01-22 08:15:00'),
             ],
             [
-                'timeline_id' => 3,
-                'report_tracking_id' => 'rp1W5e9N3qT4d8x2S',
-                'report_overview' => 'Hate speech tweets on Twitter',
-                'report_incident_date' => Carbon::parse('2025-01-25 12:00:00'),
-                'report_platform' => 'Twitter',
-                'report_region' => 'Khulna',
+                'case_file_id' => 3,
+                'incident_tracking_id' => 'rp1W5e9N3qT4d8x2S',
+                'incident_overview' => 'Hate speech tweets on Twitter',
+                'incident_date' => Carbon::parse('2025-01-25 12:00:00'),
+                'incident_platform' => 'Twitter',
+                'incident_region' => 'Khulna',
                 'behavior_type' => 'Discrimination',
                 'severity' => 'Medium',
                 'added_at' => Carbon::parse('2025-01-25 12:30:00'),
@@ -277,8 +277,8 @@ class CyberGuardDataSeeder extends Seeder
             ],
         ];
 
-        foreach ($timelineReports as $report) {
-            DB::table('timeline_reports')->insert($report);
+        foreach ($caseFileIncidents as $caseFileIncident) {
+            DB::table('case_file_incidents')->insert($caseFileIncident);
         }
     }
 }
