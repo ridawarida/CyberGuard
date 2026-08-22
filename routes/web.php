@@ -94,3 +94,6 @@ Route::middleware('staff:moderator,admin')
         Route::put('/{incident}', [IncidentReviewController::class, 'update'])->name('update');
     });
     
+
+// Johra - Module 2: Digital Safe Space routes.
+require __DIR__ . '/safe-space.php';
