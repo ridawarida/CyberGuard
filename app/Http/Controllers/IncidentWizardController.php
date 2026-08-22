@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use App\Models\Incident;
 
 class IncidentWizardController extends Controller
@@ -21,6 +22,10 @@ class IncidentWizardController extends Controller
             'incident_date' => 'required|date',
             'platform' => 'required|string|max:100',
             'behavior_type' => 'required|string|max:100',
+        ]);
+        session()->forget([
+            'incident_wizard.redacted_image',
+            'incident_wizard.tracking_id',
         ]);
         session([
             'incident_wizard.incident_date' => $validated['incident_date'],
@@ -73,8 +78,38 @@ class IncidentWizardController extends Controller
         $trackingId = 'inc' . strtoupper(Str::random(10));
 
         $imagePath = null;
-        if ($request->hasFile('evidence_image')) {
-            $imagePath = $request->file('evidence_image')->store('evidence', 'public');
+
+        if (session('incident_wizard.redacted_image')) {
+
+             $redactedImage = session('incident_wizard.redacted_image');
+
+            // Remove base64 prefix
+             $redactedImage = preg_replace(
+             '/^data:image\/\w+;base64,/',
+             '',
+             $redactedImage
+             );
+
+             // Convert base64 to binary
+             $redactedImage = base64_decode($redactedImage);
+
+             // Generate a unique filename
+             $fileName = 'evidence/' . Str::random(20) . '.png';
+
+             // Save redacted image
+             Storage::disk('public')->put(
+             $fileName,
+             $redactedImage
+             );
+
+             $imagePath = $fileName;
+
+        } elseif ($request->hasFile('evidence_image')) {
+
+    // Save original image if no redaction was used
+    $imagePath = $request
+        ->file('evidence_image')
+        ->store('evidence', 'public');
         }
 
         Incident::create([
@@ -102,6 +137,7 @@ class IncidentWizardController extends Controller
             'incident_wizard.behavior_type',
             'incident_wizard.description',
             'incident_wizard.overview',
+            'incident_wizard.redacted_image',
         ]);
 
         session(['incident_wizard.tracking_id' => $trackingId]);
@@ -133,5 +169,18 @@ class IncidentWizardController extends Controller
             return redirect()->route('incident.wizard.step1');
         }
         return view('incident.success', ['tracking_id' => $trackingId]);
+    }
+    public function redact()
+    {
+        return view('incident.redact');
+    }
+
+    public function postRedact(Request $request)
+    {
+        session([
+            'incident_wizard.redacted_image' => $request->redacted_image
+        ]);
+
+        return redirect()->route('incident.wizard.step3');
     }
 }
