@@ -41,6 +41,8 @@ Route::prefix('incident/wizard')->name('incident.wizard.')->group(function () {
     Route::get('/step3', [IncidentWizardController::class, 'step3'])->name('step3');
     Route::post('/step3', [IncidentWizardController::class, 'postStep3'])->name('postStep3');
     Route::get('/success', [IncidentWizardController::class, 'success'])->name('success');
+    Route::get('/redact', [IncidentWizardController::class, 'redact'])->name('redact');
+    Route::post('/redact', [IncidentWizardController::class, 'postRedact'])->name('postRedact');
 });
 
 // Anonymous Ticket Status Tracking Portal
