@@ -6,6 +6,7 @@ use App\Models\PanicEvent;
 use App\Models\PanicSetting;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Log;
@@ -32,8 +33,12 @@ class PanicController extends Controller
      *
      * Public. Returns only display flags, never ids or timestamps.
      */
-    public function config(): JsonResponse
+    public function config(Request $request): JsonResponse|RedirectResponse
     {
+        if (! $request->expectsJson()) {
+            return redirect()->route('home');
+        }
+
         $setting = PanicSetting::active();
 
         return response()
@@ -122,6 +127,8 @@ class PanicController extends Controller
             'incident_wizard.tracking_id',
             'case_file_wizard',
             'case_file_incidents',
+            'recovery_journal_id',
+            'recovery_journal_created_code',
         ]);
 
         if (Auth::guard('web')->check()) {
