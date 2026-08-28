@@ -41,7 +41,7 @@
                 <div class="row g-0 process-row">
                     <div class="col-md-4 process-item"><span class="process-number">01</span><i class="fas fa-file-shield"></i><h3>Report safely</h3><p>Submit what happened and keep your personal identity out of the report.</p><a href="{{ route('incident.wizard.step1') }}">Start a report <i class="fas fa-arrow-right"></i></a></div>
                     <div class="col-md-4 process-item"><span class="process-number">02</span><i class="fas fa-folder-tree"></i><h3>Build a case file</h3><p>Connect incidents that reveal an ongoing pattern of harassment or stalking.</p><a href="{{ route('case-file.create') }}">Create a case file <i class="fas fa-arrow-right"></i></a></div>
-                    <div class="col-md-4 process-item"><span class="process-number">03</span><i class="fas fa-life-ring"></i><h3>Find support</h3><p>Check your case status and find regional crisis centers and hotlines.</p><a href="{{ route('ticket.status.index') }}">Check case status <i class="fas fa-arrow-right"></i></a></div>
+                    <div class="col-md-4 process-item"><span class="process-number">03</span><i class="fas fa-life-ring"></i><h3>Find support</h3><p>Find nearby crisis centers and hotlines based on your approximate city.</p><a href="{{ route('help-centers.index') }}">Find nearby help <i class="fas fa-arrow-right"></i></a></div>
                 </div>
             </div>
         </section>
@@ -49,7 +49,7 @@
         <section id="resources" class="resources-band">
             <div class="container resources-grid">
                 <div><p class="section-kicker">When you need a pause</p><h2>Tools for the space between reporting and recovery.</h2><p>CyberGuard combines practical evidence tools with immediate coping resources, so you are not left with a form and nowhere to go.</p></div>
-                <div class="resource-links"><a href="{{ route('safe-space.index') }}"><span><i class="fas fa-wind"></i></span><strong>Digital safe space</strong><small>Reset, breathe, and regain focus.</small><i class="fas fa-arrow-up-right-from-square"></i></a><a href="{{ route('ticket.status.index') }}"><span><i class="fas fa-magnifying-glass"></i></span><strong>Track a submission</strong><small>Return to a report with its token.</small><i class="fas fa-arrow-up-right-from-square"></i></a></div>
+                <div class="resource-links"><a href="{{ route('safe-space.index') }}"><span><i class="fas fa-wind"></i></span><strong>Digital safe space</strong><small>Reset, breathe, and regain focus.</small><i class="fas fa-arrow-up-right-from-square"></i></a><a href="{{ route('recovery-journal.index') }}"><span><i class="fas fa-seedling"></i></span><strong>Recovery journal</strong><small>Keep private notes on your progress.</small><i class="fas fa-arrow-up-right-from-square"></i></a><a href="{{ route('ticket.status.index') }}"><span><i class="fas fa-magnifying-glass"></i></span><strong>Track a submission</strong><small>Return to a report with its token.</small><i class="fas fa-arrow-up-right-from-square"></i></a></div>
             </div>
         </section>
     </main>

@@ -370,6 +370,12 @@
                 </div>
             </aside>
         </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ route('recovery-journal.index') }}" class="btn btn-outline-danger px-4 py-3">
+                <i class="fas fa-seedling me-2"></i>Start a private recovery journal
+            </a>
+        </div>
     </div>
 </div>
 @endsection

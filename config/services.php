@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'help_centers' => [
+        'geolocation_url' => env('HELP_CENTER_GEOLOCATION_URL', 'http://ip-api.com/json'),
+        'timeout' => env('HELP_CENTER_GEOLOCATION_TIMEOUT', 5),
+        'result_limit' => env('HELP_CENTER_RESULT_LIMIT', 10),
+    ],
+
 ];

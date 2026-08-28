@@ -9,6 +9,9 @@ use App\Http\Controllers\Admin\HelpDirectoryController;
 use App\Http\Controllers\Moderator\IncidentReviewController;
 use App\Models\CaseFile;
 use App\Http\Controllers\TicketStatusController;
+use App\Http\Controllers\HelpCenterDirectoryController;
+use App\Http\Controllers\RecoveryJournalController;
+use App\Http\Middleware\PreventSensitiveCaching;
 
 // Guest/Anonymous routes for case files
 Route::get('/case-files/create', function () {
@@ -63,6 +66,18 @@ Route::post('/case-files/{tracking_id}/remove-incidents', [CaseFileController::c
     ->name('case-file.removeIncidents');
 
 //home default
+Route::get('/help-centers', [HelpCenterDirectoryController::class, 'index'])->name('help-centers.index');
+
+Route::prefix('recovery-journal')->name('recovery-journal.')->group(function () {
+    Route::get('/', [RecoveryJournalController::class, 'index'])->name('index')->middleware(PreventSensitiveCaching::class);
+    Route::post('/start', [RecoveryJournalController::class, 'start'])->name('start')->middleware('throttle:10,1', PreventSensitiveCaching::class);
+    Route::post('/unlock', [RecoveryJournalController::class, 'unlock'])->name('unlock')->middleware('throttle:10,1', PreventSensitiveCaching::class);
+    Route::post('/entries', [RecoveryJournalController::class, 'storeEntry'])->name('entries.store')->middleware(PreventSensitiveCaching::class);
+    Route::put('/entries/{entry}', [RecoveryJournalController::class, 'updateEntry'])->name('entries.update')->middleware(PreventSensitiveCaching::class);
+    Route::delete('/entries/{entry}', [RecoveryJournalController::class, 'destroyEntry'])->name('entries.destroy')->middleware(PreventSensitiveCaching::class);
+    Route::post('/forget', [RecoveryJournalController::class, 'forget'])->name('forget')->middleware(PreventSensitiveCaching::class);
+});
+
 Route::get('/', function () {
     return view('welcome');
 })->name('home');

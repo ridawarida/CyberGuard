@@ -6,6 +6,7 @@ use App\Http\Controllers\CaseFileController;
 use App\Http\Controllers\Admin\HelpCenterController;
 use App\Http\Controllers\Admin\HotlineController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\HelpCenterDirectoryController;
 
 Route::get('/case-files/categories', [CaseFileController::class, 'categories']);
 Route::post('/case-files', [CaseFileController::class, 'store']);
@@ -17,6 +18,7 @@ Route::put('/case-files/{tracking_id}', [CaseFileController::class, 'update']);
 // Public routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::get('/help-centers/nearby', [HelpCenterDirectoryController::class, 'nearby']);
 
 // Protected routes (require authentication)
 Route::middleware('auth:sanctum')->group(function () {
