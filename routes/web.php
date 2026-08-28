@@ -120,8 +120,12 @@ Route::middleware('staff:moderator,admin')
         Route::post('/{incident}/claim', [IncidentReviewController::class, 'claim'])->name('claim');
         Route::post('/{incident}/release', [IncidentReviewController::class, 'release'])->name('release');
         Route::put('/{incident}', [IncidentReviewController::class, 'update'])->name('update');
+        Route::post('/{incident}/scan-threats', [IncidentReviewController::class, 'scanThreats'])
+            ->name('scan-threats');
     });
     
 
 // Johra - Module 2: Digital Safe Space routes.
 require __DIR__ . '/safe-space.php';
+require __DIR__.'/consultation.php';
+require __DIR__.'/case-export.php';

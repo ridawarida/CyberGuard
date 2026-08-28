@@ -4,7 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
-
+use App\Models\Incident;
+use App\Observers\IncidentObserver;
 class AppServiceProvider extends ServiceProvider
 {
     /**
@@ -24,5 +25,6 @@ class AppServiceProvider extends ServiceProvider
         // paginator renders Tailwind markup. Switch it so pagination links in
         // the moderation workspace match the rest of the UI.
         Paginator::useBootstrapFive();
+        Incident::observe(IncidentObserver::class);
     }
 }
