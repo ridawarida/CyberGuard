@@ -1,3 +1,4 @@
+
 @extends('layouts.app')
 
 @section('content')
@@ -16,7 +17,9 @@
             <div class="alert alert-danger">
                 <h3 class="mb-0" style="letter-spacing: 2px;">{{ $tracking_id }}</h3>
             </div>
-
+            @if($accessKey)
+                @include('consult.partials.access-key-notice', ['accessKey' => $accessKey])
+            @endif
             <p class="small text-muted mb-4">
                 We recommend writing this code down or taking a screenshot, since it is not stored anywhere else for your privacy.
             </p>

@@ -145,6 +145,7 @@ class IncidentWizardController extends Controller
         return redirect()->route('incident.wizard.success');
     }
 
+
     // Send tracking code via email (email is not stored anywhere)
     private function sendTrackingCodeEmail(string $email, string $trackingId): void
     {
@@ -168,7 +169,18 @@ class IncidentWizardController extends Controller
         if (!$trackingId) {
             return redirect()->route('incident.wizard.step1');
         }
-        return view('incident.success', ['tracking_id' => $trackingId]);
+        $incident = \App\Models\Incident::where('tracking_id', $trackingId)->first();
+
+        $accessKey = null;
+
+        if ($incident) {
+            $accessKey = \App\Models\Consultation::forIncident($incident->id)->access_key;
+        }
+
+        return view('incident.success', [
+            'tracking_id' => $trackingId,
+            'accessKey' => $accessKey,
+        ]);
     }
     public function redact()
     {
