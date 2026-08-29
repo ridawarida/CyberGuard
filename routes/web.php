@@ -14,6 +14,7 @@ use App\Http\Controllers\RecoveryJournalController;
 use App\Http\Middleware\PreventSensitiveCaching;
 use App\Http\Controllers\PlatformPolicyController;
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\ActivityTrendsController;
 
 // Guest/Anonymous routes for case files
 Route::get('/case-files/create', function () {
@@ -118,6 +119,7 @@ Route::middleware('staff:admin')->prefix('admin')->name('admin.')->group(functio
         Route::put('/{category}', [CategoryController::class, 'update'])->name('update');
         Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');
     });
+    Route::get('/activity-trends', [ActivityTrendsController::class, 'index'])->name('activity-trends.index');
 });
 
 /*

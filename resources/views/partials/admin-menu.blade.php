@@ -21,6 +21,9 @@
         <a href="{{ route('admin.categories.index') }}" class="admin-menu-link">
             <i class="fas fa-tags me-1"></i>Categories
         </a>
+        <a href="{{ route('admin.activity-trends.index') }}" class="admin-menu-link">
+            <i class="fas fa-chart-pie me-1"></i>Activity Trends
+        </a>
         <form method="POST" action="{{ route('staff.logout') }}" class="m-0">
             @csrf
             <button type="submit" class="admin-menu-link admin-menu-logout">
