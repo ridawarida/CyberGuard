@@ -18,6 +18,9 @@
         <a href="{{ route('admin.help-directory.index') }}" class="admin-menu-link">
             <i class="fas fa-location-dot me-1"></i>Help directory
         </a>
+        <a href="{{ route('admin.categories.index') }}" class="admin-menu-link">
+            <i class="fas fa-tags me-1"></i>Categories
+        </a>
         <form method="POST" action="{{ route('staff.logout') }}" class="m-0">
             @csrf
             <button type="submit" class="admin-menu-link admin-menu-logout">
