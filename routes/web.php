@@ -12,6 +12,8 @@ use App\Http\Controllers\TicketStatusController;
 use App\Http\Controllers\HelpCenterDirectoryController;
 use App\Http\Controllers\RecoveryJournalController;
 use App\Http\Middleware\PreventSensitiveCaching;
+use App\Http\Controllers\Admin\CategoryController;
+
 
 // Guest/Anonymous routes for case files
 Route::get('/case-files/create', function () {
@@ -51,6 +53,8 @@ Route::prefix('incident/wizard')->name('incident.wizard.')->group(function () {
 // Anonymous Ticket Status Tracking Portal
 Route::get('/ticket-status', [TicketStatusController::class, 'index'])->name('ticket.status.index');
 Route::post('/ticket-status', [TicketStatusController::class, 'search'])->name('ticket.status.search');
+
+
 
 // View existing case file
 Route::get('/case-files/view/{tracking_id}', function ($tracking_id) {
@@ -104,6 +108,16 @@ Route::middleware('staff:admin')->prefix('admin')->name('admin.')->group(functio
     Route::post('/help-directory', [HelpDirectoryController::class, 'store'])->name('help-directory.store');
     Route::put('/help-directory/{helpCenter}', [HelpDirectoryController::class, 'update'])->name('help-directory.update');
     Route::delete('/help-directory/{helpCenter}', [HelpDirectoryController::class, 'destroy'])->name('help-directory.destroy');
+
+    // Ishrat - Module 3: Abuse Category and Classification Directory Editor
+    Route::prefix('categories')->name('categories.')->group(function () {
+        Route::get('/', [CategoryController::class, 'index'])->name('index');
+        Route::get('/create', [CategoryController::class, 'create'])->name('create');
+        Route::post('/', [CategoryController::class, 'store'])->name('store');
+        Route::get('/{category}/edit', [CategoryController::class, 'edit'])->name('edit');
+        Route::put('/{category}', [CategoryController::class, 'update'])->name('update');
+        Route::delete('/{category}', [CategoryController::class, 'destroy'])->name('destroy');
+    });
 });
 
 /*
