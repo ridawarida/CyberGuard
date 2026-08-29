@@ -43,6 +43,8 @@
                    href="{{ route('moderator.incidents.index', array_merge(request()->except('page', 'scope'), ['scope' => $key])) }}">
                     {{ $label }}
                 </a>
+                <a href="{{ route('moderator.platform-policies.index') }}" class="btn btn-outline-danger">
+    <i class="fas fa-shield-alt"></i> Manage Platform Policies</a>
             </li>
         @endforeach
     </ul>

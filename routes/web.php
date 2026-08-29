@@ -12,6 +12,7 @@ use App\Http\Controllers\TicketStatusController;
 use App\Http\Controllers\HelpCenterDirectoryController;
 use App\Http\Controllers\RecoveryJournalController;
 use App\Http\Middleware\PreventSensitiveCaching;
+use App\Http\Controllers\PlatformPolicyController;
 
 // Guest/Anonymous routes for case files
 Route::get('/case-files/create', function () {
@@ -123,7 +124,43 @@ Route::middleware('staff:moderator,admin')
         Route::post('/{incident}/scan-threats', [IncidentReviewController::class, 'scanThreats'])
             ->name('scan-threats');
     });
-    
+/*
+|--------------------------------------------------------------------------
+| Moderator Platform Policy Management
+|--------------------------------------------------------------------------
+*/
+Route::middleware('staff:moderator,admin')
+    ->prefix('moderator/platform-policies')
+    ->name('moderator.platform-policies.')
+    ->group(function () {
+
+        Route::get('/', [PlatformPolicyController::class, 'index'])
+            ->name('index');
+
+        Route::get('/create', [PlatformPolicyController::class, 'create'])
+            ->name('create');
+
+        Route::post('/', [PlatformPolicyController::class, 'store'])
+            ->name('store');
+
+        Route::get('/{platformPolicy}/edit', [PlatformPolicyController::class, 'edit'])
+            ->name('edit');
+
+        Route::put('/{platformPolicy}', [PlatformPolicyController::class, 'update'])
+            ->name('update');
+
+        Route::delete('/{platformPolicy}', [PlatformPolicyController::class, 'destroy'])
+            ->name('destroy');
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Public Platform Policies
+|--------------------------------------------------------------------------
+*/
+Route::get('/platform-policies', [PlatformPolicyController::class, 'userIndex'])
+    ->name('platform-policies.index');
+
 
 // Johra - Module 2: Digital Safe Space routes.
 require __DIR__ . '/safe-space.php';

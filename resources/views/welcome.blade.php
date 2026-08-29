@@ -29,6 +29,8 @@
                 <div class="hero-actions">
                     <a href="{{ route('incident.wizard.step1') }}" class="btn btn-primary-action"><i class="fas fa-file-circle-plus me-2"></i>Submit an incident</a>
                     <a href="{{ route('case-file.create') }}" class="btn btn-secondary-action"><i class="fas fa-folder-plus me-2"></i>Create a case file</a>
+                    <a href="{{ route('platform-policies.index') }}" class="btn btn-outline-danger">
+    <i class="fas fa-shield-alt"></i> Platform Policies</a>
                 </div>
                 <div class="hero-note"><i class="fas fa-user-secret me-2"></i>Anonymous access. No account required.</div>
             </div>
