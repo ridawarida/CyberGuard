@@ -34,6 +34,7 @@ class Incident extends Model
         'updated_at' => 'datetime',
         'claimed_at' => 'datetime',
         'reviewed_at' => 'datetime',
+        'ai_scanned_at' => 'datetime',
     ];
 
     // Relationships
