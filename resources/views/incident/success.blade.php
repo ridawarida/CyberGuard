@@ -20,6 +20,12 @@
             @if($accessKey)
                 @include('consult.partials.access-key-notice', ['accessKey' => $accessKey])
             @endif
+            <div class="mt-4">
+                <a href="/consult/session" class="btn btn-primary">
+                    Start Secure Consultation →
+                </a>
+            </div>
+
             <p class="small text-muted mb-4">
                 We recommend writing this code down or taking a screenshot, since it is not stored anywhere else for your privacy.
             </p>

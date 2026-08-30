@@ -31,7 +31,8 @@
     {{-- Scope tabs --}}
     <ul class="nav nav-tabs mb-3">
         @php
-            $tabs = [
+            
+$tabs = [
                 'pool' => 'Open Pool (' . $poolCount . ')',
                 'mine' => 'My Cases (' . $mineCount . ')',
                 'all'  => 'All Reports',
@@ -47,6 +48,11 @@
     <i class="fas fa-shield-alt"></i> Manage Platform Policies</a>
             </li>
         @endforeach
+        <li class="nav-item">
+            <a class="nav-link" href="{{ route('moderator.consultations.index') }}">
+                Secure Consultations
+            </a>
+        </li>
     </ul>
 
     {{-- Filters --}}
