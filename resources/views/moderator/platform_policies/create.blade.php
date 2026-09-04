@@ -1,248 +1,168 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+@extends('layouts.app')
 
-    <title>Add Platform Policy - CyberGuard</title>
+@section('title', 'Add Platform Policy | CyberGuard')
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            margin: 0;
-            padding: 30px;
-        }
+@section('content')
+<div class="container py-4">
 
-        .container {
-            max-width: 800px;
-            margin: auto;
-        }
+    {{-- Breadcrumb --}}
+    <div class="mb-3">
+        <a href="{{ route('moderator.platform-policies.index') }}" class="text-decoration-none text-muted small">
+            <i class="fas fa-arrow-left me-1"></i> Back to Platform Policies
+        </a>
+    </div>
 
-        .card {
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
 
-        h1 {
-            margin-top: 0;
-            color: #222;
-        }
+            <div class="card border-0 shadow-sm rounded-3">
+                <div class="card-header bg-white py-3 border-bottom">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle p-2 me-3" style="background-color: rgba(220, 20, 60, 0.1);">
+                            <i class="fas fa-plus-circle fa-lg" style="color: #DC143C;"></i>
+                        </div>
+                        <div>
+                            <h4 class="fw-bold mb-0">Add Platform Policy</h4>
+                            <p class="text-muted small mb-0">
+                                Register a social media platform's official reporting portal and takedown guidance.
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
-        .description {
-            color: #6b7280;
-            margin-bottom: 25px;
-        }
+                <div class="card-body p-4">
 
-        .form-group {
-            margin-bottom: 20px;
-        }
+                    @if ($errors->any())
+                        <div class="alert alert-danger alert-dismissible fade show border-0 shadow-sm mb-4">
+                            <h6 class="fw-bold mb-2">
+                                <i class="fas fa-exclamation-circle me-1"></i> Please correct the following errors:
+                            </h6>
+                            <ul class="mb-0 ps-3 small">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
 
-        label {
-            display: block;
-            margin-bottom: 7px;
-            font-weight: bold;
-            color: #374151;
-        }
+                    <form action="{{ route('moderator.platform-policies.store') }}" method="POST">
+                        @csrf
 
-        input,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 15px;
-            box-sizing: border-box;
-        }
+                        {{-- Platform Name --}}
+                        <div class="mb-3">
+                            <label for="platform" class="form-label fw-bold small text-secondary">
+                                Platform Name <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-globe text-muted"></i>
+                                </span>
+                                <input
+                                    type="text"
+                                    class="form-control border-start-0 @error('platform') is-invalid @enderror"
+                                    id="platform"
+                                    name="platform"
+                                    value="{{ old('platform') }}"
+                                    placeholder="e.g., Instagram, TikTok, YouTube, Facebook"
+                                    required
+                                >
+                                @error('platform')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-text small">Enter the official platform or application brand name.</div>
+                        </div>
 
-        textarea {
-            min-height: 150px;
-            resize: vertical;
-        }
+                        {{-- Reporting URL --}}
+                        <div class="mb-3">
+                            <label for="reporting_url" class="form-label fw-bold small text-secondary">
+                                Official Reporting URL <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-link text-muted"></i>
+                                </span>
+                                <input
+                                    type="url"
+                                    class="form-control border-start-0 @error('reporting_url') is-invalid @enderror"
+                                    id="reporting_url"
+                                    name="reporting_url"
+                                    value="{{ old('reporting_url') }}"
+                                    placeholder="https://www.instagram.com/hacked/ or reporting URL"
+                                    required
+                                >
+                                @error('reporting_url')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-text small">Direct link to the platform's harassment/abuse reporting portal.</div>
+                        </div>
 
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #2563eb;
-        }
+                        {{-- Reporting Instructions --}}
+                        <div class="mb-3">
+                            <label for="instructions" class="form-label fw-bold small text-secondary">
+                                Step-by-Step Reporting Instructions <span class="text-danger">*</span>
+                            </label>
+                            <textarea
+                                class="form-control @error('instructions') is-invalid @enderror"
+                                id="instructions"
+                                name="instructions"
+                                rows="5"
+                                placeholder="Explain the exact steps victims should take to flag or report abusive content..."
+                                required
+                            >{{ old('instructions') }}</textarea>
+                            @error('instructions')
+                                <div class="invalid-feedback">{{ $message }}</div>
+                            @enderror
+                            <div class="form-text small">Provide clear, sequential steps for victims to submit an official takedown request.</div>
+                        </div>
 
-        .error {
-            color: #dc2626;
-            font-size: 14px;
-            margin-top: 5px;
-        }
+                        {{-- Last Verified Date --}}
+                        <div class="mb-4">
+                            <label for="last_verified_at" class="form-label fw-bold small text-secondary">
+                                Verification Audit Date
+                            </label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">
+                                    <i class="fas fa-calendar-alt text-muted"></i>
+                                </span>
+                                <input
+                                    type="date"
+                                    class="form-control border-start-0 @error('last_verified_at') is-invalid @enderror"
+                                    id="last_verified_at"
+                                    name="last_verified_at"
+                                    value="{{ old('last_verified_at', now()->format('Y-m-d')) }}"
+                                >
+                                <button type="button" class="btn btn-outline-secondary btn-sm" onclick="document.getElementById('last_verified_at').value = new Date().toISOString().split('T')[0];">
+                                    Set to Today
+                                </button>
+                                @error('last_verified_at')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                @enderror
+                            </div>
+                            <div class="form-text small">
+                                Policies unverified for 90 or more days are automatically flagged with a "Needs Review" alert.
+                            </div>
+                        </div>
 
-        .buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 25px;
-        }
+                        {{-- Buttons --}}
+                        <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+                            <a href="{{ route('moderator.platform-policies.index') }}" class="btn btn-outline-secondary">
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-crimson">
+                                <i class="fas fa-save me-1"></i> Save Platform Policy
+                            </button>
+                        </div>
 
-        .save-btn {
-            background: #2563eb;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 15px;
-        }
+                    </form>
 
-        .save-btn:hover {
-            background: #1d4ed8;
-        }
-
-        .cancel-btn {
-            background: #6b7280;
-            color: white;
-            text-decoration: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-        }
-
-        .cancel-btn:hover {
-            background: #4b5563;
-        }
-
-        .required {
-            color: #dc2626;
-        }
-    </style>
-</head>
-
-<body>
-
-<div class="container">
-
-    <div class="card">
-
-        <h1>Add Platform Policy</h1>
-
-        <p class="description">
-            Add the official reporting information and instructions for a platform.
-        </p>
-
-        @if($errors->any())
-            <div class="error" style="margin-bottom: 20px;">
-                <strong>Please fix the following errors:</strong>
-
-                <ul>
-                    @foreach($errors->all() as $error)
-                        <li>{{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-        @endif
-
-        <form
-            action="{{ route('moderator.platform-policies.store') }}"
-            method="POST"
-        >
-
-            @csrf
-
-            <div class="form-group">
-
-                <label for="platform">
-                    Platform <span class="required">*</span>
-                </label>
-
-                <input
-                    type="text"
-                    id="platform"
-                    name="platform"
-                    value="{{ old('platform') }}"
-                    placeholder="Example: Facebook"
-                    required
-                >
-
-                @error('platform')
-                    <div class="error">{{ $message }}</div>
-                @enderror
-
+                </div>
             </div>
 
-            <div class="form-group">
-
-                <label for="reporting_url">
-                    Reporting URL <span class="required">*</span>
-                </label>
-
-                <input
-                    type="url"
-                    id="reporting_url"
-                    name="reporting_url"
-                    value="{{ old('reporting_url') }}"
-                    placeholder="https://example.com/report"
-                    required
-                >
-
-                @error('reporting_url')
-                    <div class="error">{{ $message }}</div>
-                @enderror
-
-            </div>
-
-            <div class="form-group">
-
-                <label for="instructions">
-                    Reporting Instructions <span class="required">*</span>
-                </label>
-
-                <textarea
-                    id="instructions"
-                    name="instructions"
-                    placeholder="Explain how users can report harmful content on this platform..."
-                    required
-                >{{ old('instructions') }}</textarea>
-
-                @error('instructions')
-                    <div class="error">{{ $message }}</div>
-                @enderror
-
-            </div>
-
-            <div class="form-group">
-
-                <label for="last_verified_at">
-                    Last Verified Date
-                </label>
-
-                <input
-                    type="date"
-                    id="last_verified_at"
-                    name="last_verified_at"
-                    value="{{ old('last_verified_at') }}"
-                >
-
-                @error('last_verified_at')
-                    <div class="error">{{ $message }}</div>
-                @enderror
-
-            </div>
-
-            <div class="buttons">
-
-                <button type="submit" class="save-btn">
-                    Save Policy
-                </button>
-
-                <a
-                    href="{{ route('moderator.platform-policies.index') }}"
-                    class="cancel-btn"
-                >
-                    Cancel
-                </a>
-
-            </div>
-
-        </form>
-
+        </div>
     </div>
 
 </div>
-
-</body>
-</html>
+@endsection

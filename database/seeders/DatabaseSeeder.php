@@ -24,10 +24,18 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        // Create default moderator
+        // Create default moderator 1
         User::create([
             'name' => 'System Moderator',
             'email' => 'moderator@cyberguard.com',
+            'password' => Hash::make('mod123'),
+            'role' => 'moderator',
+        ]);
+
+        // Create moderator 2
+        User::create([
+            'name' => 'Second Moderator',
+            'email' => 'moderator2@cyberguard.com',
             'password' => Hash::make('mod123'),
             'role' => 'moderator',
         ]);
@@ -40,5 +48,8 @@ class DatabaseSeeder extends Seeder
 
         // Johra - Module 1: default panic button configuration
         $this->call(PanicSettingSeeder::class);
+
+        // Anika - Module 3: default platform reporting policies and verification status
+        $this->call(PlatformPolicySeeder::class);
     }
 }
