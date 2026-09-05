@@ -40,5 +40,8 @@ return [
         'timeout' => env('HELP_CENTER_GEOLOCATION_TIMEOUT', 5),
         'result_limit' => env('HELP_CENTER_RESULT_LIMIT', 10),
     ],
+    'hive' => [
+    'api_key' => env('HIVE_API_KEY'),
+],
 
 ];
