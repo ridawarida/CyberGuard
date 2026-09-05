@@ -26,6 +26,16 @@ class Incident extends Model
         'claimed_at',
         'moderator_notes',
         'reviewed_at',
+        'ai_risk_score',
+        'ai_risk_level',
+        'ai_reason',
+        'ai_scanned_at',
+        'ai_text_risk_score',
+        'ai_text_risk_level',
+        'ai_text_reason',
+        'ai_image_risk_score',
+        'ai_image_risk_level',
+        'ai_image_reason',
     ];
 
     protected $casts = [

@@ -13,10 +13,15 @@
                 Signed in as {{ auth()->user()->name }} ({{ ucfirst(auth()->user()->role) }})
             </small>
         </div>
-        <form method="POST" action="{{ route('staff.logout') }}">
-            @csrf
-            <button type="submit" class="btn btn-outline-secondary btn-sm">Log out</button>
-        </form>
+        <div class="d-flex align-items-center gap-2">
+            <a href="{{ route('moderator.platform-policies.index') }}" class="btn btn-outline-danger btn-sm">
+                <i class="fas fa-shield-alt me-1"></i> Manage Platform Policies
+            </a>
+            <form method="POST" action="{{ route('staff.logout') }}">
+                @csrf
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Log out</button>
+            </form>
+        </div>
     </div>
 
     @foreach (['success' => 'success', 'warning' => 'warning', 'error' => 'danger'] as $key => $class)
@@ -44,8 +49,6 @@ $tabs = [
                    href="{{ route('moderator.incidents.index', array_merge(request()->except('page', 'scope'), ['scope' => $key])) }}">
                     {{ $label }}
                 </a>
-                <a href="{{ route('moderator.platform-policies.index') }}" class="btn btn-outline-danger">
-    <i class="fas fa-shield-alt"></i> Manage Platform Policies</a>
             </li>
         @endforeach
         <li class="nav-item">

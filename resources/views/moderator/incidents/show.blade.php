@@ -7,8 +7,8 @@
 <div class="container py-4">
 
     {{-- Back + Header --}}
-    <a href="{{ url()->previous() }}" class="text-decoration-none small">
-        &larr; Back to workspace
+    <a href="{{ route('moderator.incidents.index') }}" class="text-decoration-none small text-muted">
+        <i class="fas fa-arrow-left me-1"></i> Back to workspace
     </a>
 
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-2 mb-4">
@@ -418,6 +418,19 @@
                                         available text and evidence analyses.
                                     </p>
 
+                                @endif
+
+                                {{-- Prompt moderator to escalate when high risk/threat is detected --}}
+                                @if ($overallLevel === 'High' || $overallScore >= 70)
+                                    <div class="alert alert-danger d-flex align-items-center mt-3 mb-0 text-start border-0 shadow-sm" role="alert">
+                                        <i class="fas fa-exclamation-triangle fa-2x me-3 text-danger"></i>
+                                        <div>
+                                            <strong class="text-danger d-block">Action Required: Severe Threat Detected!</strong>
+                                            <span class="small text-dark">
+                                                High danger indicators were identified in this report. Please prompt escalation by setting the tracking status to <strong>Escalated</strong> in the assessment form.
+                                            </span>
+                                        </div>
+                                    </div>
                                 @endif
 
                             </div>
